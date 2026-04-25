@@ -308,7 +308,7 @@ function RingChart({stat,value,max=50,size=70}) {
   return (
     <div style={{textAlign:"center",position:"relative",width:size,height:size}}>
       <svg width={size} height={size} style={{transform:"rotate(-90deg)"}}>
-        <circle cx={cx} cy={cy} r={r} fill="none" stroke="#1a0a2e" strokeWidth="6"/>
+        <circle cx={cx} cy={cy} r={r} fill="none" stroke="rgba(168,85,247,0.12)" strokeWidth="6"/>
         <circle cx={cx} cy={cy} r={r} fill="none" stroke={st.color} strokeWidth="6"
           strokeDasharray={`${dash} ${circ}`} strokeLinecap="round"
           style={{filter:`drop-shadow(0 0 4px ${st.color}80)`,transition:"stroke-dasharray 1s ease"}}/>
@@ -333,9 +333,9 @@ function RadarChart({stats,size=180}) {
   return (
     <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} style={{overflow:"visible"}}>
       {[0.25,0.5,0.75,1].map(ratio=>(
-        <polygon key={ratio} points={gridPts(ratio).map(p=>p.join(",")).join(" ")} fill="none" stroke="#1a0a2e" strokeWidth={ratio===1?1.5:0.8} strokeDasharray={ratio<1?"4,4":""}/>
+        <polygon key={ratio} points={gridPts(ratio).map(p=>p.join(",")).join(" ")} fill="none" stroke="rgba(168,85,247,0.12)" strokeWidth={ratio===1?1.5:0.8} strokeDasharray={ratio<1?"4,4":""}/>
       ))}
-      {keys.map((_,i)=>{const a=angle(i);return<line key={i} x1={cx} y1={cy} x2={cx+Math.cos(a)*r} y2={cy+Math.sin(a)*r} stroke="#1a0a2e" strokeWidth="1"/>;}) }
+      {keys.map((_,i)=>{const a=angle(i);return<line key={i} x1={cx} y1={cy} x2={cx+Math.cos(a)*r} y2={cy+Math.sin(a)*r} stroke="rgba(168,85,247,0.12)" strokeWidth="1"/>;}) }
       <polygon points={poly.map(p=>p.join(",")).join(" ")} fill="#7c3aed18" stroke="#7c3aed" strokeWidth="2" style={{filter:"drop-shadow(0 0 8px #7c3aed60)"}}/>
       {poly.map((p,i)=><circle key={i} cx={p[0]} cy={p[1]} r={4} fill={Object.values(STATS)[i].color} style={{filter:`drop-shadow(0 0 5px ${Object.values(STATS)[i].color})`}}/>)}
       {keys.map((k,i)=>{const a=angle(i),lx=cx+Math.cos(a)*(r+20),ly=cy+Math.sin(a)*(r+20);const st=STATS[k];return<text key={k} x={lx} y={ly} textAnchor="middle" dominantBaseline="middle" fontSize="11" fill={st.color} fontWeight="700">{st.icon}</text>;})}
@@ -379,9 +379,9 @@ function BarChart({data}) {
     <div style={{display:"flex",alignItems:"flex-end",gap:5,height:90,marginTop:6}}>
       {data.map((v,i)=>(
         <div key={i} style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",gap:3}}>
-          <div style={{fontSize:9,color:"#2a1f4a",height:14,display:"flex",alignItems:"flex-end",fontFamily:"Rajdhani,sans-serif"}}>{v>0?v:""}</div>
-          <div style={{width:"100%",background:v>0?"linear-gradient(180deg,#7c3aed,#5a3fa0)":"#1a0a2e",borderRadius:"3px 3px 0 0",height:`${Math.max(4,(v/max)*60)}px`,transition:"height .6s",boxShadow:v>0?"0 0 8px #7c3aed60":""}}/>
-          <div style={{fontSize:9,color:"#2a1f4a",fontFamily:"Rajdhani,sans-serif"}}>{days[i]}</div>
+          <div style={{fontSize:9,color:"rgba(168,85,247,.35)",height:14,display:"flex",alignItems:"flex-end",fontFamily:"Rajdhani,sans-serif"}}>{v>0?v:""}</div>
+          <div style={{width:"100%",background:v>0?"linear-gradient(180deg,#7c3aed,#5a3fa0)":"rgba(168,85,247,.1)",borderRadius:"3px 3px 0 0",height:`${Math.max(4,(v/max)*60)}px`,transition:"height .6s",boxShadow:v>0?"0 0 8px #7c3aed60":""}}/>
+          <div style={{fontSize:9,color:"rgba(168,85,247,.35)",fontFamily:"Rajdhani,sans-serif"}}>{days[i]}</div>
         </div>
       ))}
     </div>
@@ -423,7 +423,7 @@ function DiagnosticsPanel({gs,lvi}) {
   });
 
   if(warnings.length===0) return (
-    <div style={{background:"#071407",border:"1px solid #1a3a1a",borderRadius:12,padding:"11px 14px",marginBottom:12,display:"flex",alignItems:"center",gap:10}}>
+    <div style={{background:"rgba(5,15,5,.8)",border:"1px solid #1a3a1a",borderRadius:12,padding:"11px 14px",marginBottom:12,display:"flex",alignItems:"center",gap:10}}>
       <span style={{fontSize:18}}>✅</span>
       <div style={{flex:1}}>
         <div style={{fontSize:11,fontWeight:700,color:"#4ade80",fontFamily:"Cinzel,serif"}}>Всё в порядке</div>
@@ -438,7 +438,7 @@ function DiagnosticsPanel({gs,lvi}) {
         const isDanger=w.level==="danger";
         const isInfo=w.level==="info";
         const bg=isDanger?"#1a0808":isInfo?"#07060d":"#1a1005";
-        const border=isDanger?"#5a1a1a":isInfo?"#1a0a2e":"#4a3800";
+        const border=isDanger?"#5a1a1a":isInfo?"rgba(168,85,247,.1)":"#4a3800";
         const color=isDanger?"#f87171":isInfo?"#5a3fa0":"#fbbf24";
         const statSt=w.stat?STATS[w.stat]:null;
         return (
@@ -446,7 +446,7 @@ function DiagnosticsPanel({gs,lvi}) {
             <span style={{fontSize:16,flexShrink:0}}>{w.icon}</span>
             <div style={{flex:1}}>
               <div style={{fontSize:11,fontWeight:700,color:statSt?statSt.color:color,fontFamily:"Rajdhani,sans-serif",lineHeight:1.4}}>{w.msg}</div>
-              {w.stat&&statSt&&<div style={{fontSize:9,color:"#2a1f4a",marginTop:2,fontFamily:"Rajdhani,sans-serif"}}>Квесты категории {statSt.icon} {statSt.name} → вкладка Квесты</div>}
+              {w.stat&&statSt&&<div style={{fontSize:9,color:"rgba(168,85,247,.35)",marginTop:2,fontFamily:"Rajdhani,sans-serif"}}>Квесты категории {statSt.icon} {statSt.name} → вкладка Квесты</div>}
             </div>
           </div>
         );
@@ -459,7 +459,7 @@ function DiagnosticsPanel({gs,lvi}) {
 function ShareCard({gs,cls,lvi,onClose}) {
   return (
     <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,.97)",zIndex:400,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:16}}>
-      <div style={{background:"linear-gradient(135deg,#0a0714,#1a0a2e,#0a0714)",border:"1px solid #5a3fa0",borderRadius:20,padding:24,width:"min(340px,90vw)",position:"relative",overflow:"hidden"}}>
+      <div style={{background:"linear-gradient(135deg,rgba(10,4,25,.95),rgba(20,8,45,.95),rgba(10,4,25,.95))",border:"1px solid #5a3fa0",borderRadius:20,padding:24,width:"min(340px,90vw)",position:"relative",overflow:"hidden"}}>
         <div style={{position:"absolute",top:8,left:8,width:18,height:18,borderTop:"2px solid #d4a017",borderLeft:"2px solid #d4a017"}}/>
         <div style={{position:"absolute",top:8,right:8,width:18,height:18,borderTop:"2px solid #d4a017",borderRight:"2px solid #d4a017"}}/>
         <div style={{position:"absolute",bottom:8,left:8,width:18,height:18,borderBottom:"2px solid #d4a017",borderLeft:"2px solid #d4a017"}}/>
@@ -474,13 +474,13 @@ function ShareCard({gs,cls,lvi,onClose}) {
         </div>
         <div style={{display:"grid",gridTemplateColumns:"repeat(5,1fr)",gap:5,marginBottom:12}}>
           {Object.entries(STATS).map(([k,st])=>(
-            <div key={k} style={{textAlign:"center",background:"#0a0714",border:`1px solid ${st.color}30`,borderRadius:8,padding:"6px 2px"}}>
+            <div key={k} style={{textAlign:"center",background:"rgba(6,4,15,.8)",border:`1px solid ${st.color}30`,borderRadius:8,padding:"6px 2px"}}>
               <div style={{fontSize:13}}>{st.icon}</div>
               <div style={{fontSize:13,fontWeight:900,color:st.color,fontFamily:"Rajdhani,sans-serif"}}>{gs.stats[k]||1}</div>
             </div>
           ))}
         </div>
-        <div style={{display:"flex",justifyContent:"space-around",background:"#0a0714",borderRadius:10,padding:"8px 0",border:"1px solid #2a1f4a"}}>
+        <div style={{display:"flex",justifyContent:"space-around",background:"rgba(6,4,15,.8)",borderRadius:10,padding:"8px 0",border:"1px solid rgba(168,85,247,.2)"}}>
           {[["⚡","Ур.",lvi.level,"#d4a017"],["🔥","Комбо",gs.combo,"#f97316"],["❤️","HP",gs.hp,"#e05555"],["💰","Gold",gs.gold,"#d4a017"]].map(([i,l,v,c])=>(
             <div key={l} style={{textAlign:"center"}}>
               <div style={{fontSize:9,color:"#5a3fa0",fontFamily:"Cinzel,serif"}}>{i} {l}</div>
@@ -488,7 +488,7 @@ function ShareCard({gs,cls,lvi,onClose}) {
             </div>
           ))}
         </div>
-        <div style={{textAlign:"center",marginTop:10,fontSize:8,color:"#2a1f4a",letterSpacing:2,fontFamily:"Cinzel,serif"}}>LIFE RPG • ТЁМНОЕ ФЭНТЕЗИ</div>
+        <div style={{textAlign:"center",marginTop:10,fontSize:8,color:"rgba(168,85,247,.35)",letterSpacing:2,fontFamily:"Cinzel,serif"}}>LIFE RPG • ТЁМНОЕ ФЭНТЕЗИ</div>
       </div>
       <div style={{marginTop:12,fontSize:12,color:"#5a3fa0",textAlign:"center"}}>Сделай скриншот ⚔️</div>
       <button onClick={onClose} style={{marginTop:10,...S.bGray,padding:"9px 22px"}}>Закрыть</button>
@@ -517,13 +517,13 @@ function DeathScreen({deathCount,gold,onRevive}) {
       {phase>=2&&<div style={{textAlign:"center",animation:"textReveal 0.6s ease"}}>
         <div style={{fontSize:36,fontWeight:900,color:"#e05555",fontFamily:"Cinzel,serif",textShadow:"0 0 40px #e05555",marginBottom:8}}>ГЕРОЙ ПАЛ В БОЮ</div>
         <div style={{fontSize:13,color:"#5a3fa0",lineHeight:1.9,marginBottom:8}}>Бездействие опустило HP до нуля</div>
-        <div style={{background:"#1a0808",border:"1px solid #3a0a0a",borderRadius:12,padding:14,marginBottom:20,display:"inline-block"}}>
+        <div style={{background:"rgba(25,5,5,.7)",border:"1px solid rgba(224,85,85,.25)",borderRadius:12,padding:14,marginBottom:20,display:"inline-block"}}>
           <div style={{fontSize:11,color:"#5a3fa0",marginBottom:4}}>Возрождение #{deathCount+1}</div>
           <div style={{fontSize:11,color:"#7c6a9a"}}>Уровень, XP и статы сброшены</div>
           <div style={{fontSize:14,fontWeight:700,color:"#d4a017",marginTop:4}}>💰 {Math.floor(gold*0.5)}G сохраняется</div>
         </div>
       </div>}
-      {phase>=3&&<button onClick={onRevive} style={{background:"#1a0808",border:"2px solid #e05555",borderRadius:14,color:"#e05555",padding:"14px 36px",fontSize:16,fontWeight:700,cursor:"pointer",fontFamily:"Cinzel,serif",letterSpacing:1,animation:"reviveGlow 2s infinite"}}>⚔️ Возродиться</button>}
+      {phase>=3&&<button onClick={onRevive} style={{background:"rgba(25,5,5,.7)",border:"2px solid rgba(224,85,85,.6)",borderRadius:14,color:"#e05555",padding:"14px 36px",fontSize:16,fontWeight:700,cursor:"pointer",fontFamily:"Cinzel,serif",letterSpacing:1,animation:"reviveGlow 2s infinite"}}>⚔️ Возродиться</button>}
     </div>
   );
 }
@@ -568,7 +568,7 @@ function Onboarding({onFinish}) {
   const toggleSphere=(id)=>{if(selected.includes(id))setSelected(s=>s.filter(x=>x!==id));else if(selected.length<3)setSelected(s=>[...s,id]);};
   const finalName=useCustom?customName.trim():name;
   return (
-    <div style={{background:"#07060d",minHeight:"100vh",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:20,fontFamily:"'Segoe UI',system-ui,sans-serif",color:"#e2d5f0"}}>
+    <div style={{background:"rgba(7,6,13,.8)",minHeight:"100vh",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:20,fontFamily:"'Segoe UI',system-ui,sans-serif",color:"#e2d5f0"}}>
       <style>{`@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Rajdhani:wght@400;500;600;700&display=swap');*{box-sizing:border-box}input,select,textarea{outline:none}`}</style>
       {step===0&&<div style={{width:"100%",maxWidth:400,textAlign:"center"}}>
         <div style={{fontSize:64,marginBottom:12,filter:"drop-shadow(0 0 20px #7c3aed)"}}>⚔️</div>
@@ -578,14 +578,14 @@ function Onboarding({onFinish}) {
         <div style={{fontSize:11,color:"#5a3fa0",marginBottom:8,textAlign:"left",fontFamily:"Cinzel,serif",letterSpacing:1}}>ВЫБЕРИ ИМЯ ГЕРОЯ</div>
         <div style={{display:"flex",flexWrap:"wrap",gap:6,marginBottom:12}}>
           {FANTASY_NAMES.map(n=>(
-            <button key={n} onClick={()=>{setName(n);setUseCustom(false);}} style={{background:name===n&&!useCustom?"#1a0a2e":"#0a0714",border:`1px solid ${name===n&&!useCustom?"#7c3aed":"#1a0a2e"}`,borderRadius:8,padding:"6px 11px",cursor:"pointer",color:name===n&&!useCustom?"#c4b5fd":"#5a3fa0",fontSize:12,fontWeight:700,fontFamily:"Cinzel,serif",boxShadow:name===n&&!useCustom?"0 0 8px #7c3aed40":""}}>
+            <button key={n} onClick={()=>{setName(n);setUseCustom(false);}} style={{background:name===n&&!useCustom?"rgba(168,85,247,.1)":"#0a0714",border:`1px solid ${name===n&&!useCustom?"#7c3aed":"rgba(168,85,247,.1)"}`,borderRadius:8,padding:"6px 11px",cursor:"pointer",color:name===n&&!useCustom?"#c4b5fd":"#5a3fa0",fontSize:12,fontWeight:700,fontFamily:"Cinzel,serif",boxShadow:name===n&&!useCustom?"0 0 8px #7c3aed40":""}}>
               {n}
             </button>
           ))}
         </div>
-        <div style={{fontSize:10,color:"#2a1f4a",marginBottom:6,textAlign:"center"}}>— или введи своё —</div>
-        <input value={customName} onChange={e=>{setCustomName(e.target.value);setUseCustom(true);setName("");}} placeholder="Своё имя..." style={{width:"100%",background:"#0a0714",border:`1px solid ${useCustom&&customName?"#7c3aed":"#1a0a2e"}`,borderRadius:10,color:"#e2d5f0",padding:"11px 14px",fontSize:14,marginBottom:14,fontFamily:"Cinzel,serif"}}/>
-        <button onClick={()=>finalName&&setStep(1)} disabled={!finalName} style={{width:"100%",background:finalName?"#1a0a2e":"#0a0714",border:`1px solid ${finalName?"#7c3aed":"#1a0a2e"}`,borderRadius:12,color:finalName?"#c4b5fd":"#2a1f4a",padding:"13px",fontSize:14,fontWeight:700,cursor:finalName?"pointer":"default",fontFamily:"Cinzel,serif",letterSpacing:1,boxShadow:finalName?"0 0 15px #7c3aed20":""}}>
+        <div style={{fontSize:10,color:"rgba(168,85,247,.35)",marginBottom:6,textAlign:"center"}}>— или введи своё —</div>
+        <input value={customName} onChange={e=>{setCustomName(e.target.value);setUseCustom(true);setName("");}} placeholder="Своё имя..." style={{width:"100%",background:"rgba(6,4,15,.8)",border:`1px solid ${useCustom&&customName?"#7c3aed":"rgba(168,85,247,.1)"}`,borderRadius:10,color:"#e2d5f0",padding:"11px 14px",fontSize:14,marginBottom:14,fontFamily:"Cinzel,serif"}}/>
+        <button onClick={()=>finalName&&setStep(1)} disabled={!finalName} style={{width:"100%",background:finalName?"rgba(168,85,247,.1)":"#0a0714",border:`1px solid ${finalName?"#7c3aed":"rgba(168,85,247,.1)"}`,borderRadius:12,color:finalName?"#c4b5fd":"#2a1f4a",padding:"13px",fontSize:14,fontWeight:700,cursor:finalName?"pointer":"default",fontFamily:"Cinzel,serif",letterSpacing:1,boxShadow:finalName?"0 0 15px #7c3aed20":""}}>
           {finalName?`Продолжить, ${finalName} →`:"Выбери имя"}
         </button>
       </div>}
@@ -601,21 +601,21 @@ function Onboarding({onFinish}) {
             <div style={{fontSize:10,fontWeight:800,color:cat.color,textTransform:"uppercase",letterSpacing:2,marginBottom:6,fontFamily:"Cinzel,serif"}}>{cat.name}</div>
             <div style={{display:"flex",flexWrap:"wrap",gap:5}}>
               {sps.map(sp=>{const isSel=selected.includes(sp.id),dis=!isSel&&selected.length>=3;return(
-                <button key={sp.id} onClick={()=>!dis&&toggleSphere(sp.id)} style={{background:isSel?`${cat.color}18`:"#0a0714",border:`1px solid ${isSel?cat.color:"#1a0a2e"}`,borderRadius:9,padding:"6px 10px",cursor:dis?"not-allowed":"pointer",color:isSel?cat.color:"#5a3fa0",fontSize:11,fontWeight:isSel?700:400,opacity:dis?.35:1,boxShadow:isSel?`0 0 8px ${cat.color}30`:""}}>
+                <button key={sp.id} onClick={()=>!dis&&toggleSphere(sp.id)} style={{background:isSel?`${cat.color}18`:"#0a0714",border:`1px solid ${isSel?cat.color:"rgba(168,85,247,.25)"}`,borderRadius:9,padding:"6px 10px",cursor:dis?"not-allowed":"pointer",color:isSel?cat.color:"#5a3fa0",fontSize:11,fontWeight:isSel?700:400,opacity:dis?.35:1,boxShadow:isSel?`0 0 8px ${cat.color}30`:""}}>
                   {sp.icon} {sp.name}
                 </button>);})}
             </div>
           </div>;
         })}
-        {selected.length>0&&<div style={{background:"#0a0714",border:"1px solid #1a0a2e",borderRadius:11,padding:11,marginTop:6,marginBottom:12}}>
+        {selected.length>0&&<div style={{background:"rgba(6,4,15,.8)",border:"1px solid rgba(168,85,247,.12)",borderRadius:11,padding:11,marginTop:6,marginBottom:12}}>
           <div style={{fontSize:10,color:"#5a3fa0",marginBottom:6,fontFamily:"Cinzel,serif",letterSpacing:1}}>КВЕСТЫ КАЖДЫЙ ДЕНЬ:</div>
           {SPHERES.filter(s=>selected.includes(s.id)).flatMap(sp=>sp.quests.map((q,i)=>(
-            <div key={`${sp.id}-${i}`} style={{fontSize:11,color:"#7c6a9a",padding:"3px 0",borderBottom:"1px solid #1a0a2e"}}>{sp.icon} {q.title} — <span style={{color:"#d4a017"}}>+{q.xp}XP</span></div>
+            <div key={`${sp.id}-${i}`} style={{fontSize:11,color:"#7c6a9a",padding:"3px 0",borderBottom:"1px solid rgba(168,85,247,.1)"}}>{sp.icon} {q.title} — <span style={{color:"#d4a017"}}>+{q.xp}XP</span></div>
           )))}
         </div>}
         <div style={{display:"flex",gap:8}}>
           <button onClick={()=>setStep(0)} style={S.bGray}>←</button>
-          <button onClick={()=>selected.length>0&&setStep(2)} disabled={selected.length===0} style={{flex:1,background:"#1a0a2e",border:`1px solid ${selected.length>0?"#7c3aed":"#1a0a2e"}`,borderRadius:11,color:selected.length>0?"#c4b5fd":"#2a1f4a",padding:"12px",fontSize:13,fontWeight:700,cursor:selected.length>0?"pointer":"default",fontFamily:"Cinzel,serif"}}>
+          <button onClick={()=>selected.length>0&&setStep(2)} disabled={selected.length===0} style={{flex:1,background:"rgba(168,85,247,.1)",border:`1px solid ${selected.length>0?"#7c3aed":"rgba(168,85,247,.1)"}`,borderRadius:11,color:selected.length>0?"#c4b5fd":"#2a1f4a",padding:"12px",fontSize:13,fontWeight:700,cursor:selected.length>0?"pointer":"default",fontFamily:"Cinzel,serif"}}>
             {selected.length===0?"Выбери сферу":`Далее (${selected.length}/3) →`}
           </button>
         </div>
@@ -627,14 +627,14 @@ function Onboarding({onFinish}) {
           <div style={{fontSize:11,color:"#5a3fa0",marginTop:5}}>Привычка которую хочешь искоренить. Каждый день без срыва — победа.</div>
         </div>
         {DEFAULT_HABITS.map(h=>{const isSel=habitId===h.id;return(
-          <button key={h.id} onClick={()=>setHabitId(isSel?null:h.id)} style={{width:"100%",background:isSel?"#1a0a2e":"#0a0714",border:`1px solid ${isSel?"#7c3aed":"#1a0a2e"}`,borderRadius:12,padding:"12px 15px",marginBottom:7,cursor:"pointer",display:"flex",alignItems:"center",gap:11,textAlign:"left",boxShadow:isSel?"0 0 10px #7c3aed20":""}}>
+          <button key={h.id} onClick={()=>setHabitId(isSel?null:h.id)} style={{width:"100%",background:isSel?"rgba(168,85,247,.1)":"#0a0714",border:`1px solid ${isSel?"#7c3aed":"rgba(168,85,247,.1)"}`,borderRadius:12,padding:"12px 15px",marginBottom:7,cursor:"pointer",display:"flex",alignItems:"center",gap:11,textAlign:"left",boxShadow:isSel?"0 0 10px #7c3aed20":""}}>
             <span style={{fontSize:22}}>{h.icon}</span>
             <span style={{fontSize:13,fontWeight:isSel?700:400,color:isSel?"#c4b5fd":"#7c6a9a"}}>{h.name}</span>
             {isSel&&<span style={{marginLeft:"auto",color:"#7c3aed",fontWeight:800}}>✓</span>}
           </button>);})}
         <div style={{display:"flex",gap:8,marginTop:8}}>
           <button onClick={()=>setStep(1)} style={S.bGray}>←</button>
-          <button onClick={()=>setStep(3)} style={{flex:1,background:"#1a0a2e",border:"1px solid #7c3aed",borderRadius:11,color:"#c4b5fd",padding:"12px",fontSize:13,fontWeight:700,cursor:"pointer",fontFamily:"Cinzel,serif"}}>
+          <button onClick={()=>setStep(3)} style={{flex:1,background:"rgba(168,85,247,.1)",border:"1px solid #7c3aed",borderRadius:11,color:"#c4b5fd",padding:"12px",fontSize:13,fontWeight:700,cursor:"pointer",fontFamily:"Cinzel,serif"}}>
             {habitId?"Далее →":"Пропустить →"}
           </button>
         </div>
@@ -645,10 +645,10 @@ function Onboarding({onFinish}) {
           <div style={{fontSize:19,fontWeight:700,color:"#e2d5f0",fontFamily:"Cinzel,serif"}}>Ради чего всё это?</div>
           <div style={{fontSize:11,color:"#5a3fa0",marginTop:5}}>Напиши свою цель. Она будет напоминать тебе каждый день.</div>
         </div>
-        <textarea value={goal} onChange={e=>setGoal(e.target.value)} placeholder="Стать лучшей версией себя..." style={{width:"100%",background:"#0a0714",border:"1px solid #1a0a2e",borderRadius:12,color:"#e2d5f0",padding:"13px",fontSize:13,minHeight:100,resize:"none",marginBottom:14,fontFamily:"Rajdhani,sans-serif"}}/>
+        <textarea value={goal} onChange={e=>setGoal(e.target.value)} placeholder="Стать лучшей версией себя..." style={{width:"100%",background:"rgba(6,4,15,.8)",border:"1px solid rgba(168,85,247,.12)",borderRadius:12,color:"#e2d5f0",padding:"13px",fontSize:13,minHeight:100,resize:"none",marginBottom:14,fontFamily:"Rajdhani,sans-serif"}}/>
         <div style={{display:"flex",gap:8}}>
           <button onClick={()=>setStep(2)} style={S.bGray}>←</button>
-          <button onClick={()=>onFinish(finalName,selected,habitId,goal.trim())} style={{flex:1,background:"#1a0a2e",border:"1px solid #d4a017",borderRadius:11,color:"#d4a017",padding:"12px",fontSize:15,fontWeight:700,cursor:"pointer",fontFamily:"Cinzel,serif",letterSpacing:1,boxShadow:"0 0 20px #d4a01720"}}>
+          <button onClick={()=>onFinish(finalName,selected,habitId,goal.trim())} style={{flex:1,background:"rgba(168,85,247,.1)",border:"1px solid #d4a017",borderRadius:11,color:"#d4a017",padding:"12px",fontSize:15,fontWeight:700,cursor:"pointer",fontFamily:"Cinzel,serif",letterSpacing:1,boxShadow:"0 0 20px #d4a01720"}}>
             ⚔️ Начать путь
           </button>
         </div>
@@ -663,7 +663,7 @@ function GoalWindow({goal,onClose,onEdit}) {
   const [buf,setBuf]=useState(goal||"");
   return (
     <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,.94)",zIndex:300,display:"flex",alignItems:"center",justifyContent:"center",padding:20}}>
-      <div style={{background:"linear-gradient(135deg,#0a0714,#1a0a2e,#0a0714)",border:"1px solid #5a3fa0",borderRadius:20,padding:28,width:"min(380px,95vw)",textAlign:"center",position:"relative"}}>
+      <div style={{background:"linear-gradient(135deg,rgba(10,4,25,.95),rgba(20,8,45,.95),rgba(10,4,25,.95))",border:"1px solid #5a3fa0",borderRadius:20,padding:28,width:"min(380px,95vw)",textAlign:"center",position:"relative"}}>
         <div style={{position:"absolute",top:10,left:10,width:14,height:14,borderTop:"2px solid #d4a017",borderLeft:"2px solid #d4a017"}}/>
         <div style={{position:"absolute",top:10,right:10,width:14,height:14,borderTop:"2px solid #d4a017",borderRight:"2px solid #d4a017"}}/>
         <div style={{position:"absolute",bottom:10,left:10,width:14,height:14,borderBottom:"2px solid #d4a017",borderLeft:"2px solid #d4a017"}}/>
@@ -671,16 +671,16 @@ function GoalWindow({goal,onClose,onEdit}) {
         <div style={{fontSize:32,marginBottom:8,filter:"drop-shadow(0 0 12px #d4a01780)"}}>🌟</div>
         <div style={{fontSize:10,color:"#5a3fa0",letterSpacing:3,marginBottom:12,fontFamily:"Cinzel,serif"}}>МОЯ ЦЕЛЬ</div>
         {editing?<>
-          <textarea value={buf} onChange={e=>setBuf(e.target.value)} style={{width:"100%",background:"#0a0714",border:"1px solid #2a1f4a",borderRadius:10,color:"#e2d5f0",padding:12,fontSize:13,minHeight:90,resize:"none",marginBottom:12,fontFamily:"Rajdhani,sans-serif"}}/>
+          <textarea value={buf} onChange={e=>setBuf(e.target.value)} style={{width:"100%",background:"rgba(6,4,15,.8)",border:"1px solid rgba(168,85,247,.2)",borderRadius:10,color:"#e2d5f0",padding:12,fontSize:13,minHeight:90,resize:"none",marginBottom:12,fontFamily:"Rajdhani,sans-serif"}}/>
           <div style={{display:"flex",gap:8}}>
-            <button onClick={()=>{onEdit(buf);setEditing(false);onClose();}} style={{flex:1,background:"#1a0a2e",border:"1px solid #d4a017",borderRadius:10,color:"#d4a017",padding:"10px",cursor:"pointer",fontWeight:700,fontFamily:"Cinzel,serif"}}>✓ Сохранить</button>
+            <button onClick={()=>{onEdit(buf);setEditing(false);onClose();}} style={{flex:1,background:"rgba(168,85,247,.1)",border:"1px solid #d4a017",borderRadius:10,color:"#d4a017",padding:"10px",cursor:"pointer",fontWeight:700,fontFamily:"Cinzel,serif"}}>✓ Сохранить</button>
             {goal&&<button onClick={()=>{setBuf(goal);setEditing(false);}} style={{...S.bGray,padding:"10px 14px"}}>✗</button>}
           </div>
         </>:<>
           <div style={{fontSize:15,color:"#d4a017",fontFamily:"Rajdhani,sans-serif",lineHeight:1.8,marginBottom:22,fontStyle:"italic"}}>"{goal}"</div>
           <div style={{display:"flex",gap:8}}>
             <button onClick={()=>setEditing(true)} style={{flex:1,...S.bGray,padding:"11px",fontSize:12}}>✏️ Изменить</button>
-            <button onClick={onClose} style={{flex:2,background:"#1a0a2e",border:"1px solid #d4a017",borderRadius:12,color:"#d4a017",padding:"11px",cursor:"pointer",fontSize:13,fontWeight:700,fontFamily:"Cinzel,serif"}}>Вперёд ⚔️</button>
+            <button onClick={onClose} style={{flex:2,background:"rgba(168,85,247,.1)",border:"1px solid #d4a017",borderRadius:12,color:"#d4a017",padding:"11px",cursor:"pointer",fontSize:13,fontWeight:700,fontFamily:"Cinzel,serif"}}>Вперёд ⚔️</button>
           </div>
         </>}
       </div>
@@ -695,11 +695,11 @@ function ClassNotif({cls,onClose}) {
       <div style={{background:`linear-gradient(135deg,#0a0714,${cls.color}12,#0a0714)`,border:`1px solid ${cls.color}`,borderRadius:20,padding:28,width:"min(380px,95vw)",textAlign:"center",animation:"popIn .4s ease",boxShadow:`0 0 40px ${cls.color}25`}}>
         <div style={{fontSize:10,color:cls.color,letterSpacing:3,marginBottom:6,fontFamily:"Cinzel,serif"}}>НОВЫЙ КЛАСС</div>
         <div style={{fontSize:30,fontWeight:900,color:cls.color,fontFamily:"Cinzel,serif",textShadow:`0 0 20px ${cls.color}80`,marginBottom:6}}>{cls.name}</div>
-        <div style={{background:"#0a0714",border:`1px solid ${cls.color}25`,borderRadius:12,padding:14,marginBottom:18,textAlign:"left"}}>
+        <div style={{background:"rgba(6,4,15,.8)",border:`1px solid ${cls.color}25`,borderRadius:12,padding:14,marginBottom:18,textAlign:"left"}}>
           <div style={{fontSize:13,color:"#e2d5f0",lineHeight:1.8,fontFamily:"Rajdhani,sans-serif"}}>{cls.motivation}</div>
         </div>
         <div style={{background:`${cls.color}15`,border:`1px solid ${cls.color}40`,borderRadius:9,padding:"7px 14px",marginBottom:16,fontSize:12,color:cls.color}}>▸ {cls.bonus}</div>
-        <button onClick={onClose} style={{background:"#1a0a2e",border:`1px solid ${cls.color}`,borderRadius:12,color:cls.color,padding:"12px 28px",cursor:"pointer",fontSize:13,fontWeight:700,fontFamily:"Cinzel,serif"}}>Принять</button>
+        <button onClick={onClose} style={{background:"rgba(168,85,247,.1)",border:`1px solid ${cls.color}`,borderRadius:12,color:cls.color,padding:"12px 28px",cursor:"pointer",fontSize:13,fontWeight:700,fontFamily:"Cinzel,serif"}}>Принять</button>
       </div>
     </div>
   );
@@ -709,7 +709,7 @@ function ClassNotif({cls,onClose}) {
 function HpTooltip({onClose}) {
   return (
     <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,.8)",zIndex:200,display:"flex",alignItems:"center",justifyContent:"center",padding:16}} onClick={onClose}>
-      <div style={{background:"#0e0b1a",border:"1px solid #2a1f4a",borderRadius:16,padding:20,width:"min(320px,90vw)"}} onClick={e=>e.stopPropagation()}>
+      <div style={{background:"rgba(15,8,35,.55)",border:"1px solid rgba(168,85,247,.2)",borderRadius:16,padding:20,width:"min(320px,90vw)"}} onClick={e=>e.stopPropagation()}>
         <div style={{fontSize:12,color:"#d4a017",fontWeight:700,marginBottom:12,fontFamily:"Cinzel,serif",letterSpacing:1}}>❤️ КАК РАБОТАЕТ HP</div>
         <div style={{fontSize:12,color:"#7c6a9a",lineHeight:2.0,fontFamily:"Rajdhani,sans-serif"}}>
           Каждое утро система оценивает вчерашний день:<br/>
@@ -717,7 +717,7 @@ function HpTooltip({onClose}) {
           <span style={{color:"#4ade80"}}>◆ Все дейли выполнены → +5 HP</span><br/>
           <span style={{color:"#60a5fa"}}>◆ День отдыха → +10 HP</span>
         </div>
-        <div style={{background:"#1a0808",border:"1px solid #3a0a0a",borderRadius:10,padding:12,marginTop:12,marginBottom:14}}>
+        <div style={{background:"rgba(25,5,5,.7)",border:"1px solid rgba(224,85,85,.25)",borderRadius:10,padding:12,marginTop:12,marginBottom:14}}>
           <div style={{fontSize:11,color:"#e05555",fontWeight:700,marginBottom:4,fontFamily:"Cinzel,serif"}}>⚠️ При 0 HP — СМЕРТЬ ПЕРСОНАЖА</div>
           <div style={{fontSize:11,color:"#7c6a9a",lineHeight:1.7,fontFamily:"Rajdhani,sans-serif"}}>Уровень, XP и все статы сбрасываются до нуля. Сохраняется только 50% накопленного Gold и все твои привычки. Путь начинается заново.</div>
         </div>
@@ -734,17 +734,17 @@ function WeeklyReportModal({report,onClose}) {
   const max=Math.max(...(report.weekXP||[0]));
   return (
     <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,.93)",zIndex:250,display:"flex",alignItems:"center",justifyContent:"center",padding:16}} onClick={onClose}>
-      <div style={{background:"#0a0714",border:"1px solid #5a3fa0",borderRadius:20,padding:20,width:"min(380px,92vw)",maxHeight:"85vh",overflow:"auto"}} onClick={e=>e.stopPropagation()}>
+      <div style={{background:"rgba(6,4,15,.8)",border:"1px solid #5a3fa0",borderRadius:20,padding:20,width:"min(380px,92vw)",maxHeight:"85vh",overflow:"auto"}} onClick={e=>e.stopPropagation()}>
         <div style={{textAlign:"center",marginBottom:16}}>
           <div style={{fontSize:10,color:"#5a3fa0",letterSpacing:2,fontFamily:"Cinzel,serif"}}>ОТЧЁТ НЕДЕЛИ</div>
           <div style={{fontSize:20,fontWeight:900,color:"#d4a017",fontFamily:"Cinzel,serif",marginTop:4}}>Неделя #{report.week}</div>
         </div>
         <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8,marginBottom:16}}>
           {[["⚡","XP заработано",report.totalXp,"#d4a017"],["⚔️","Квестов",report.totalQuests,"#c4b5fd"],["🔥","Комбо",report.combo,"#f97316"],["❤️","Лучший день XP",report.bestDay,"#e05555"],["🏆","Уровень",report.level,"#7c3aed"],["💰","Gold",report.gold,"#d4a017"]].map(([i,l,v,c])=>(
-            <div key={l} style={{background:"#0e0b1a",border:`1px solid ${c}20`,borderRadius:10,padding:"10px 6px",textAlign:"center"}}>
+            <div key={l} style={{background:"rgba(15,8,35,.55)",border:`1px solid ${c}20`,borderRadius:10,padding:"10px 6px",textAlign:"center"}}>
               <div style={{fontSize:15}}>{i}</div>
               <AnimCounter value={v} color={c} size={20} duration={800}/>
-              <div style={{fontSize:9,color:"#2a1f4a",marginTop:2,fontFamily:"Cinzel,serif"}}>{l.toUpperCase()}</div>
+              <div style={{fontSize:9,color:"rgba(168,85,247,.35)",marginTop:2,fontFamily:"Cinzel,serif"}}>{l.toUpperCase()}</div>
             </div>
           ))}
         </div>
@@ -752,7 +752,7 @@ function WeeklyReportModal({report,onClose}) {
           <div style={{fontSize:10,color:"#5a3fa0",letterSpacing:1,marginBottom:8,fontFamily:"Cinzel,serif"}}>XP ПО ДНЯМ</div>
           <LineChart data={report.weekXP||Array(7).fill(0)}/>
           <div style={{display:"flex",justifyContent:"space-between",marginTop:4}}>
-            {days.map(d=><div key={d} style={{fontSize:9,color:"#2a1f4a",fontFamily:"Rajdhani,sans-serif"}}>{d}</div>)}
+            {days.map(d=><div key={d} style={{fontSize:9,color:"rgba(168,85,247,.35)",fontFamily:"Rajdhani,sans-serif"}}>{d}</div>)}
           </div>
         </div>
         {report.statGrowth&&<div style={{marginBottom:14}}>
@@ -777,11 +777,11 @@ function BossReflection({title,onSubmit,onSkip}) {
   const [text,setText]=useState("");
   return (
     <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,.92)",zIndex:250,display:"flex",alignItems:"center",justifyContent:"center",padding:20}}>
-      <div style={{background:"#0e0b1a",border:"1px solid #d4a017",borderRadius:18,padding:22,width:"min(380px,95vw)"}}>
+      <div style={{background:"rgba(15,8,35,.55)",border:"1px solid #d4a017",borderRadius:18,padding:22,width:"min(380px,95vw)"}}>
         <div style={{fontSize:26,textAlign:"center",marginBottom:8}}>⚔️</div>
         <div style={{fontWeight:700,fontSize:15,color:"#d4a017",textAlign:"center",fontFamily:"Cinzel,serif",marginBottom:6}}>Победа над боссом</div>
         <div style={{fontSize:12,color:"#5a3fa0",textAlign:"center",marginBottom:14,fontFamily:"Rajdhani,sans-serif"}}>{title}</div>
-        <textarea value={text} onChange={e=>setText(e.target.value)} placeholder="Опиши свой путь к победе... (опционально)" style={{width:"100%",background:"#07060d",border:"1px solid #2a1f4a",borderRadius:10,color:"#e2d5f0",padding:"10px",fontSize:12,minHeight:70,resize:"none",marginBottom:12,fontFamily:"Rajdhani,sans-serif"}}/>
+        <textarea value={text} onChange={e=>setText(e.target.value)} placeholder="Опиши свой путь к победе... (опционально)" style={{width:"100%",background:"rgba(7,6,13,.8)",border:"1px solid rgba(168,85,247,.2)",borderRadius:10,color:"#e2d5f0",padding:"10px",fontSize:12,minHeight:70,resize:"none",marginBottom:12,fontFamily:"Rajdhani,sans-serif"}}/>
         <div style={{display:"flex",gap:8}}>
           <button onClick={()=>onSubmit(text.trim()||null)} style={{flex:2,...S.bWin,padding:"10px",fontFamily:"Cinzel,serif"}}>
             {text.trim()?"⚔️ Записать в летопись":"⚔️ Принять победу"}
@@ -799,18 +799,38 @@ function SprintReflection({sprint,type,onSubmit,onCancel}) {
   const isWin=type==="win";
   return (
     <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,.92)",zIndex:250,display:"flex",alignItems:"center",justifyContent:"center",padding:20}}>
-      <div style={{background:"#0e0b1a",border:`1px solid ${isWin?"#d4a017":"#8b1a1a"}`,borderRadius:18,padding:22,width:"min(380px,95vw)"}}>
+      <div style={{background:"rgba(15,8,35,.55)",border:`1px solid ${isWin?"#d4a017":"#8b1a1a"}`,borderRadius:18,padding:22,width:"min(380px,95vw)"}}>
         <div style={{fontSize:26,textAlign:"center",marginBottom:8}}>{isWin?"🏆":"💔"}</div>
         <div style={{fontWeight:700,fontSize:14,color:isWin?"#d4a017":"#e05555",textAlign:"center",fontFamily:"Cinzel,serif",marginBottom:4}}>{isWin?"Спринт завершён":"Спринт провален"}</div>
         <div style={{fontSize:11,color:"#5a3fa0",textAlign:"center",marginBottom:14}}>"{sprint?.name}"</div>
-        <textarea value={text} onChange={e=>setText(e.target.value)} placeholder={isWin?"Как ты это сделал? Что помогло?":"Почему не получилось? Что сделаешь иначе?"} style={{width:"100%",background:"#07060d",border:`1px solid ${isWin?"#2a1f4a":"#3a0a0a"}`,borderRadius:10,color:"#e2d5f0",padding:"10px",fontSize:12,minHeight:80,resize:"none",marginBottom:12,fontFamily:"Rajdhani,sans-serif"}}/>
+        <textarea value={text} onChange={e=>setText(e.target.value)} placeholder={isWin?"Как ты это сделал? Что помогло?":"Почему не получилось? Что сделаешь иначе?"} style={{width:"100%",background:"rgba(7,6,13,.8)",border:`1px solid ${isWin?"#2a1f4a":"#3a0a0a"}`,borderRadius:10,color:"#e2d5f0",padding:"10px",fontSize:12,minHeight:80,resize:"none",marginBottom:12,fontFamily:"Rajdhani,sans-serif"}}/>
         <div style={{display:"flex",gap:8}}>
-          <button onClick={()=>text.trim()&&onSubmit(text.trim())} disabled={!text.trim()} style={{flex:2,background:"#1a0a2e",border:`1px solid ${text.trim()?isWin?"#d4a017":"#e05555":"#1a0a2e"}`,borderRadius:10,color:text.trim()?isWin?"#d4a017":"#e05555":"#2a1f4a",padding:"10px",cursor:text.trim()?"pointer":"default",fontWeight:700,fontSize:12,fontFamily:"Cinzel,serif"}}>
+          <button onClick={()=>text.trim()&&onSubmit(text.trim())} disabled={!text.trim()} style={{flex:2,background:"rgba(168,85,247,.1)",border:`1px solid ${text.trim()?isWin?"#d4a017":"#e05555":"rgba(168,85,247,.1)"}`,borderRadius:10,color:text.trim()?isWin?"#d4a017":"#e05555":"#2a1f4a",padding:"10px",cursor:text.trim()?"pointer":"default",fontWeight:700,fontSize:12,fontFamily:"Cinzel,serif"}}>
             {text.trim()?"Записать →":"Напиши хотя бы пару слов"}
           </button>
           <button onClick={onCancel} style={{...S.bGray,padding:"10px 14px"}}>✗</button>
         </div>
       </div>
+    </div>
+  );
+}
+
+/* ─── Mist Background ─────────────────────────────────────────────────────── */
+function MistBackground({clsColor}) {
+  return (
+    <div style={{position:"fixed",inset:0,zIndex:0,overflow:"hidden",pointerEvents:"none"}}>
+      {/* Deep base gradient */}
+      <div style={{position:"absolute",inset:0,background:"radial-gradient(ellipse 80% 60% at 50% 0%,rgba(60,10,100,.35) 0%,transparent 70%),radial-gradient(ellipse 60% 50% at 20% 80%,rgba(30,5,70,.25) 0%,transparent 60%),#06040f"}}/>
+      {/* Mist orb 1 — purple */}
+      <div style={{position:"absolute",top:"-10%",left:"30%",width:380,height:380,borderRadius:"50%",background:"radial-gradient(circle,rgba(168,85,247,.22) 0%,transparent 70%)",filter:"blur(40px)",animation:"mistDrift1 18s ease-in-out infinite"}}/>
+      {/* Mist orb 2 — deep violet */}
+      <div style={{position:"absolute",top:"40%",right:"-10%",width:300,height:300,borderRadius:"50%",background:"radial-gradient(circle,rgba(109,40,217,.18) 0%,transparent 70%)",filter:"blur(50px)",animation:"mistDrift2 24s ease-in-out infinite"}}/>
+      {/* Mist orb 3 — class color accent */}
+      <div style={{position:"absolute",bottom:"15%",left:"-5%",width:260,height:260,borderRadius:"50%",background:`radial-gradient(circle,${clsColor||"#a855f7"}22 0%,transparent 70%)`,filter:"blur(45px)",animation:"mistDrift3 20s ease-in-out infinite"}}/>
+      {/* Mist orb 4 — gold hint */}
+      <div style={{position:"absolute",top:"60%",left:"40%",width:200,height:200,borderRadius:"50%",background:"radial-gradient(circle,rgba(212,160,23,.08) 0%,transparent 70%)",filter:"blur(35px)",animation:"mistDrift1 28s ease-in-out infinite reverse"}}/>
+      {/* Subtle grid overlay */}
+      <div style={{position:"absolute",inset:0,backgroundImage:"linear-gradient(rgba(168,85,247,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(168,85,247,.03) 1px,transparent 1px)",backgroundSize:"40px 40px",opacity:.6}}/>
     </div>
   );
 }
@@ -1077,7 +1097,7 @@ export default function App() {
     setGs(null); setResetStep(0); setShowSettings(false); setShowOnboarding(true);
   };
 
-  if(loading) return <div style={{background:"#07060d",height:"100vh",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:12}}>
+  if(loading) return <div style={{background:"rgba(7,6,13,.8)",height:"100vh",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:12}}>
     <style>{`@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Rajdhani:wght@400;500;600;700&display=swap');@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}`}</style>
     <div style={{fontSize:48,animation:"float 2s ease-in-out infinite",filter:"drop-shadow(0 0 20px #7c3aed)"}}>⚔️</div>
     <div style={{color:"#d4a017",fontFamily:"Cinzel,serif",fontSize:13,letterSpacing:3}}>ЗАГРУЗКА...</div>
@@ -1102,6 +1122,7 @@ export default function App() {
         @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Rajdhani:wght@400;500;600;700&display=swap');
         ${CSS}
       `}</style>
+      <MistBackground clsColor={cls?.color}/>
 
       {deathScreen&&<DeathScreen deathCount={gs.deathCount||0} gold={gs.gold} onRevive={handleDeath}/>}
       {rebirthScreen&&<RebirthScreen name={gs.name} onDone={()=>setRebirthScreen(false)}/>}
@@ -1116,7 +1137,7 @@ export default function App() {
       </div></div>}
       {classNotif&&<ClassNotif cls={classNotif} onClose={()=>setClassNotif(null)}/>}
       {pendingQ&&<div style={S.overlay} onClick={()=>setPendingQ(null)}>
-        <div style={{background:"#0e0b1a",border:"1px solid #5a3fa0",borderRadius:20,padding:22,width:"min(340px,92vw)",boxShadow:"0 0 40px #7c3aed15"}} onClick={e=>e.stopPropagation()}>
+        <div style={{background:"rgba(15,8,35,.55)",border:"1px solid #5a3fa0",borderRadius:20,padding:22,width:"min(340px,92vw)",boxShadow:"0 0 40px #7c3aed15"}} onClick={e=>e.stopPropagation()}>
           <div style={{fontWeight:700,fontSize:15,color:"#d4a017",marginBottom:6,fontFamily:"Cinzel,serif"}}>⚔️ {pendingQ.q.title}</div>
           <div style={{fontSize:11,color:"#5a3fa0",marginBottom:14,fontFamily:"Rajdhani,sans-serif"}}>Насколько хорошо выполнено?</div>
           {OVERPERF.map(op=>(
@@ -1135,7 +1156,7 @@ export default function App() {
 
       {/* Sphere unlock notification */}
       {sphereUnlockNotif&&<div style={S.overlay} onClick={()=>setSphereUnlockNotif(null)}>
-        <div style={{background:"linear-gradient(135deg,#0a0714,#1a0a2e)",border:"1px solid #d4a017",borderRadius:20,padding:28,width:"min(360px,92vw)",textAlign:"center",animation:"popIn .4s ease"}} onClick={e=>e.stopPropagation()}>
+        <div style={{background:"linear-gradient(135deg,rgba(10,4,25,.95),#1a0a2e)",border:"1px solid #d4a017",borderRadius:20,padding:28,width:"min(360px,92vw)",textAlign:"center",animation:"popIn .4s ease"}} onClick={e=>e.stopPropagation()}>
           <div style={{fontSize:48,marginBottom:12,filter:"drop-shadow(0 0 15px #d4a017)"}}>🔓</div>
           <div style={{fontSize:22,fontWeight:900,color:"#d4a017",fontFamily:"Cinzel,serif",marginBottom:8}}>НОВАЯ СФЕРА</div>
           <div style={{fontSize:13,color:"#7c6a9a",lineHeight:1.8,marginBottom:20,fontFamily:"Rajdhani,sans-serif"}}>
@@ -1147,11 +1168,11 @@ export default function App() {
 
       {/* Stat Info */}
       {showStatInfo&&<div style={S.overlay} onClick={()=>setShowStatInfo(null)}>
-        <div style={{background:"#0e0b1a",border:`1px solid ${STATS[showStatInfo]?.color}40`,borderRadius:16,padding:20,width:"min(320px,92vw)"}} onClick={e=>e.stopPropagation()}>
+        <div style={{background:"rgba(15,8,35,.55)",border:`1px solid ${STATS[showStatInfo]?.color}40`,borderRadius:16,padding:20,width:"min(320px,92vw)"}} onClick={e=>e.stopPropagation()}>
           <div style={{fontSize:28,textAlign:"center",marginBottom:8}}>{STATS[showStatInfo]?.icon}</div>
           <div style={{fontSize:18,fontWeight:700,color:STATS[showStatInfo]?.color,textAlign:"center",fontFamily:"Cinzel,serif",marginBottom:12}}>{STATS[showStatInfo]?.name}</div>
           <div style={{fontSize:13,color:"#7c6a9a",lineHeight:1.8,marginBottom:12,fontFamily:"Rajdhani,sans-serif"}}>{STATS[showStatInfo]?.desc}</div>
-          <div style={{background:"#07060d",borderRadius:10,padding:12,marginBottom:14}}>
+          <div style={{background:"rgba(7,6,13,.8)",borderRadius:10,padding:12,marginBottom:14}}>
             <div style={{fontSize:11,color:"#5a3fa0",marginBottom:6,fontFamily:"Cinzel,serif",letterSpacing:1}}>КАК КАЧАЕТСЯ</div>
             <div style={{fontSize:11,color:"#7c6a9a",fontFamily:"Rajdhani,sans-serif",lineHeight:1.7}}>
               +1 за каждый выполненный квест этой категории<br/>
@@ -1166,15 +1187,15 @@ export default function App() {
 
       {/* Levels */}
       {showLevels&&<div style={S.overlay} onClick={()=>setShowLevels(false)}>
-        <div style={{background:"#0a0714",border:"1px solid #2a1f4a",borderRadius:20,padding:20,width:"min(360px,92vw)",maxHeight:"80vh",overflow:"auto"}} onClick={e=>e.stopPropagation()}>
+        <div style={{background:"rgba(6,4,15,.8)",border:"1px solid rgba(168,85,247,.2)",borderRadius:20,padding:20,width:"min(360px,92vw)",maxHeight:"80vh",overflow:"auto"}} onClick={e=>e.stopPropagation()}>
           <div style={{fontWeight:900,color:"#d4a017",fontSize:15,marginBottom:16,fontFamily:"Cinzel,serif",letterSpacing:1}}>⚔️ ПУТЬ ГЕРОЯ</div>
           {LVL_NAMES.map((name,i)=>{
             const lNum=i+1,isCur=lvi.level===lNum,isPast=lvi.level>lNum;
-            return <div key={i} style={{display:"flex",alignItems:"center",gap:9,padding:"7px 9px",borderRadius:9,marginBottom:3,background:isCur?"#1a0a2e":isPast?"#0a1a0a":"transparent",border:isCur?"1px solid #7c3aed":"1px solid transparent"}}>
-              <div style={{width:24,height:24,borderRadius:6,background:isCur?"#7c3aed":isPast?"#1a3a1a":"#1a0a2e",display:"flex",alignItems:"center",justifyContent:"center",fontSize:10,fontWeight:700,color:isCur?"#fff":isPast?"#4ade80":"#2a1f4a",flexShrink:0,fontFamily:"Rajdhani,sans-serif"}}>{lNum}</div>
+            return <div key={i} style={{display:"flex",alignItems:"center",gap:9,padding:"7px 9px",borderRadius:9,marginBottom:3,background:isCur?"rgba(168,85,247,.1)":isPast?"#0a1a0a":"transparent",border:isCur?"1px solid #7c3aed":"1px solid transparent"}}>
+              <div style={{width:24,height:24,borderRadius:6,background:isCur?"#7c3aed":isPast?"#1a3a1a":"rgba(168,85,247,.1)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:10,fontWeight:700,color:isCur?"#fff":isPast?"#4ade80":"#2a1f4a",flexShrink:0,fontFamily:"Rajdhani,sans-serif"}}>{lNum}</div>
               <div style={{flex:1}}>
                 <div style={{fontSize:11,fontWeight:isCur?700:400,color:isCur?"#c4b5fd":isPast?"#7c6a9a":"#2a1f4a",fontFamily:isCur?"Cinzel,serif":"inherit"}}>{name}</div>
-                <div style={{fontSize:9,color:"#1a0a2e",fontFamily:"Rajdhani,sans-serif"}}>{lNum===1?"Начало пути":cumulXP(lNum).toLocaleString()+" XP"}</div>
+                <div style={{fontSize:9,color:"rgba(168,85,247,.25)",fontFamily:"Rajdhani,sans-serif"}}>{lNum===1?"Начало пути":cumulXP(lNum).toLocaleString()+" XP"}</div>
               </div>
               {isCur&&<span style={{fontSize:10,color:"#7c3aed",fontWeight:700}}>← ты</span>}
               {isPast&&<span style={{color:"#1a5a1a",fontSize:12}}>✓</span>}
@@ -1185,10 +1206,10 @@ export default function App() {
 
       {/* Classes */}
       {showClasses&&<div style={S.overlay} onClick={()=>setShowClasses(false)}>
-        <div style={{background:"#0a0714",border:"1px solid #2a1f4a",borderRadius:20,padding:20,width:"min(380px,92vw)",maxHeight:"80vh",overflow:"auto"}} onClick={e=>e.stopPropagation()}>
+        <div style={{background:"rgba(6,4,15,.8)",border:"1px solid rgba(168,85,247,.2)",borderRadius:20,padding:20,width:"min(380px,92vw)",maxHeight:"80vh",overflow:"auto"}} onClick={e=>e.stopPropagation()}>
           <div style={{fontWeight:900,color:"#d4a017",fontSize:15,marginBottom:14,fontFamily:"Cinzel,serif",letterSpacing:1}}>🔮 КЛАССЫ ГЕРОЕВ</div>
           {CLASSES.map(cl=>{const isCur=cls.id===cl.id;return(
-            <div key={cl.id} style={{background:isCur?`${cl.color}0e`:"#0e0b1a",border:`1px solid ${isCur?cl.color:"#1a0a2e"}`,borderRadius:12,padding:"11px 13px",marginBottom:7,boxShadow:isCur?`0 0 12px ${cl.color}15`:""}}>
+            <div key={cl.id} style={{background:isCur?`${cl.color}0e`:"#0e0b1a",border:`1px solid ${isCur?cl.color:"rgba(168,85,247,.25)"}`,borderRadius:12,padding:"11px 13px",marginBottom:7,boxShadow:isCur?`0 0 12px ${cl.color}15`:""}}>
               <div style={{display:"flex",gap:7,marginBottom:3,alignItems:"center"}}>
                 <span style={{fontSize:13,fontWeight:800,color:cl.color,fontFamily:"Cinzel,serif"}}>{cl.name}</span>
                 {isCur&&<span style={{fontSize:9,background:cl.color+"20",color:cl.color,borderRadius:5,padding:"2px 6px",fontWeight:700,letterSpacing:1}}>ТЕКУЩИЙ</span>}
@@ -1201,7 +1222,7 @@ export default function App() {
 
       {/* Settings */}
       {showSettings&&<div style={S.overlay} onClick={()=>{setShowSettings(false);setResetStep(0);}}>
-        <div style={{background:"#0a0714",border:"1px solid #2a1f4a",borderRadius:20,padding:20,width:"min(380px,92vw)",maxHeight:"85vh",overflow:"auto"}} onClick={e=>e.stopPropagation()}>
+        <div style={{background:"rgba(6,4,15,.8)",border:"1px solid rgba(168,85,247,.2)",borderRadius:20,padding:20,width:"min(380px,92vw)",maxHeight:"85vh",overflow:"auto"}} onClick={e=>e.stopPropagation()}>
           <div style={{fontWeight:900,color:"#d4a017",fontSize:15,marginBottom:16,fontFamily:"Cinzel,serif",letterSpacing:1}}>⚙️ НАСТРОЙКИ</div>
           <div style={S.settCard}>
             <div style={S.settTitle}>🌟 Моя цель</div>
@@ -1228,25 +1249,25 @@ export default function App() {
                     upd(prev=>({...prev,selectedSpheres:[...(prev.selectedSpheres||[]),sp.id],customDaily:[...(prev.customDaily||[]),...newQs]}));
                     pop(`✅ "${sp.name}" добавлена!`);
                   } else if(!canAdd&&!isSel) pop(`Разблокируется позже (текущий лимит: ${maxSpheres})`,false);
-                }} style={{background:isSel?`${cat?.color||"#7c3aed"}15`:"#07060d",border:`1px solid ${isSel?cat?.color||"#7c3aed":"#1a0a2e"}`,borderRadius:8,padding:"5px 9px",cursor:"pointer",color:isSel?cat?.color||"#7c3aed":"#5a3fa0",fontSize:10,fontWeight:isSel?700:400,opacity:!isSel&&!canAdd?.35:1}}>
+                }} style={{background:isSel?`${cat?.color||"#7c3aed"}15`:"#07060d",border:`1px solid ${isSel?cat?.color||"#7c3aed":"rgba(168,85,247,.1)"}`,borderRadius:8,padding:"5px 9px",cursor:"pointer",color:isSel?cat?.color||"#7c3aed":"#5a3fa0",fontSize:10,fontWeight:isSel?700:400,opacity:!isSel&&!canAdd?.35:1}}>
                   {sp.icon} {sp.name} {isSel?"✓":""}
                 </button>;
               })}
             </div>
-            <div style={{fontSize:10,color:"#2a1f4a",fontFamily:"Rajdhani,sans-serif"}}>4-я сфера открывается через 7 дней • 5-я через 30 дней</div>
+            <div style={{fontSize:10,color:"rgba(168,85,247,.35)",fontFamily:"Rajdhani,sans-serif"}}>4-я сфера открывается через 7 дней • 5-я через 30 дней</div>
           </div>
           <div style={S.settCard}>
             <div style={S.settTitle}>🛡 Добавить привычку</div>
             {DEFAULT_HABITS.filter(h=>!gs.habits.find(x=>x.id===h.id)).map(h=>(
-              <button key={h.id} onClick={()=>addHabitFromList(h)} style={{width:"100%",background:"#07060d",border:"1px solid #1a0a2e",borderRadius:9,padding:"9px 12px",marginBottom:5,cursor:"pointer",display:"flex",alignItems:"center",gap:10}}>
+              <button key={h.id} onClick={()=>addHabitFromList(h)} style={{width:"100%",background:"rgba(7,6,13,.8)",border:"1px solid rgba(168,85,247,.12)",borderRadius:9,padding:"9px 12px",marginBottom:5,cursor:"pointer",display:"flex",alignItems:"center",gap:10}}>
                 <span style={{fontSize:18}}>{h.icon}</span>
                 <span style={{fontSize:12,color:"#7c6a9a",fontFamily:"Rajdhani,sans-serif"}}>{h.name}</span>
                 <span style={{marginLeft:"auto",color:"#4ade80",fontSize:11}}>+</span>
               </button>
             ))}
-            {DEFAULT_HABITS.every(h=>gs.habits.find(x=>x.id===h.id))&&<div style={{fontSize:11,color:"#2a1f4a",textAlign:"center"}}>Все привычки добавлены</div>}
+            {DEFAULT_HABITS.every(h=>gs.habits.find(x=>x.id===h.id))&&<div style={{fontSize:11,color:"rgba(168,85,247,.35)",textAlign:"center"}}>Все привычки добавлены</div>}
           </div>
-          <div style={{...S.settCard,border:"1px solid #3a0a0a"}}>
+          <div style={{...S.settCard,border:"1px solid rgba(224,85,85,.25)"}}>
             <div style={{...S.settTitle,color:"#e05555"}}>💀 Начать заново</div>
             <div style={{fontSize:11,color:"#5a3fa0",marginBottom:10,fontFamily:"Rajdhani,sans-serif"}}>Полное удаление всего. Персонаж, статы, достижения — всё стирается навсегда.</div>
             {resetStep===0&&<button onClick={()=>setResetStep(1)} style={{...S.bFail,width:"100%",padding:"10px",fontSize:12}}>Начать заново...</button>}
@@ -1260,7 +1281,7 @@ export default function App() {
             {resetStep===2&&<div>
               <div style={{fontSize:12,color:"#e05555",marginBottom:10,textAlign:"center",fontFamily:"Cinzel,serif"}}>⚠️ Последнее предупреждение</div>
               <div style={{display:"flex",gap:8}}>
-                <button onClick={doReset} style={{background:"#3a0a0a",border:"2px solid #e05555",borderRadius:9,color:"#e05555",padding:"11px",flex:1,cursor:"pointer",fontSize:13,fontWeight:800,fontFamily:"Cinzel,serif"}}>💀 УНИЧТОЖИТЬ ВСЁ</button>
+                <button onClick={doReset} style={{background:"#3a0a0a",border:"2px solid rgba(224,85,85,.6)",borderRadius:9,color:"#e05555",padding:"11px",flex:1,cursor:"pointer",fontSize:13,fontWeight:800,fontFamily:"Cinzel,serif"}}>💀 УНИЧТОЖИТЬ ВСЁ</button>
                 <button onClick={()=>setResetStep(0)} style={{...S.bGray,padding:"11px 14px"}}>Нет</button>
               </div>
             </div>}
@@ -1273,68 +1294,119 @@ export default function App() {
       {toast&&<div style={{...S.toast,background:toast.ok?"#0a1a0a":"#1a0a0a",borderColor:toast.ok?"#4ade80":"#e05555"}}>{toast.msg}</div>}
 
       {/* Undo */}
-      {undoSnap&&<div style={{background:"#0a0714",borderBottom:"1px solid #1a0a2e",padding:"7px 14px",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+      {undoSnap&&<div style={{background:"rgba(6,4,15,.8)",borderBottom:"1px solid rgba(168,85,247,.1)",padding:"7px 14px",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
         <span style={{fontSize:11,color:"#5a3fa0",fontFamily:"Rajdhani,sans-serif"}}>Случайно нажал?</span>
         <button onClick={doUndo} style={{...S.bFail,padding:"4px 11px",fontSize:11}}>↩️ Отмена ({undoSecs}с)</button>
       </div>}
 
-      {/* ══ HEADER ══ */}
-      <div style={S.header}>
-        <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:10}}>
-          <div>
-            {editName?<div style={{display:"flex",gap:5}}>
-              <input value={tmpName} onChange={e=>setTmpName(e.target.value)} onKeyDown={e=>e.key==="Enter"&&(upd(p=>({...p,name:tmpName||p.name})),setEditName(false))} autoFocus style={S.nameIn}/>
-              <button onClick={()=>{upd(p=>({...p,name:tmpName||p.name}));setEditName(false);}} style={S.bGreen}>✓</button>
-              <button onClick={()=>setEditName(false)} style={S.bGray}>✗</button>
-            </div>:<div style={{display:"flex",alignItems:"center",gap:7}}>
-              <span style={{fontSize:22,fontWeight:900,color:"#d4a017",fontFamily:"Cinzel,serif",textShadow:"0 0 15px #d4a01750"}}>{gs.name}</span>
-              {gs.deathCount>0&&<span style={{fontSize:10,color:"#e05555",border:"1px solid #3a0a0a",borderRadius:5,padding:"1px 5px",fontFamily:"Rajdhani,sans-serif"}}>💀×{gs.deathCount}</span>}
-              <button onClick={()=>{setTmpName(gs.name);setEditName(true);}} style={{background:"none",border:"none",cursor:"pointer",color:"#2a1f4a",fontSize:11,padding:0}}>✏️</button>
+      {/* ══ HEADER — HERO CARD ══ */}
+      <div style={{...S.header,padding:"16px 14px 14px",position:"relative",zIndex:2}}>
+
+        {/* Top row: settings + HP/Gold pills */}
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:14}}>
+          <button onClick={()=>setShowSettings(true)} style={{background:"rgba(168,85,247,.1)",border:"1px solid rgba(168,85,247,.2)",borderRadius:10,color:"#a855f7",padding:"6px 10px",cursor:"pointer",fontSize:13,backdropFilter:"blur(8px)",display:"flex",alignItems:"center",gap:5}}>
+            <span>⚙️</span>
+          </button>
+          <div style={{display:"flex",gap:6,alignItems:"center"}}>
+            {/* HP pill */}
+            <button onClick={()=>setShowHpTip(true)} style={{display:"flex",alignItems:"center",gap:5,background:hpP<30?"rgba(224,85,85,.12)":"rgba(74,222,128,.08)",border:`1px solid ${hpP<30?"rgba(224,85,85,.35)":"rgba(74,222,128,.25)"}`,borderRadius:20,padding:"5px 12px",cursor:"pointer",backdropFilter:"blur(10px)",animation:hpP<30?"pulse .8s infinite":"none",boxShadow:hpP<30?"0 0 12px rgba(224,85,85,.2)":"0 0 12px rgba(74,222,128,.1)"}}>
+              <span style={{fontSize:12}}>❤️</span>
+              <span style={{fontSize:13,fontWeight:800,color:hpP<30?"#e05555":"#4ade80",fontFamily:"Rajdhani,sans-serif"}}>{gs.hp}</span>
+            </button>
+            {/* Gold pill */}
+            <div style={{display:"flex",alignItems:"center",gap:5,background:"rgba(212,160,23,.08)",border:"1px solid rgba(212,160,23,.25)",borderRadius:20,padding:"5px 12px",backdropFilter:"blur(10px)",boxShadow:"0 0 12px rgba(212,160,23,.1)"}}>
+              <span style={{fontSize:12}}>💰</span>
+              <span style={{fontSize:13,fontWeight:800,color:"#d4a017",fontFamily:"Rajdhani,sans-serif"}}>{gs.gold}</span>
+            </div>
+            {/* Combo pill */}
+            {multS&&<div style={{display:"flex",alignItems:"center",gap:4,background:"rgba(249,115,22,.1)",border:"1px solid rgba(249,115,22,.3)",borderRadius:20,padding:"5px 10px",backdropFilter:"blur(10px)",boxShadow:"0 0 12px rgba(249,115,22,.15)"}}>
+              <span style={{fontSize:11}}>🔥</span>
+              <span style={{fontSize:12,fontWeight:800,color:"#f97316",fontFamily:"Rajdhani,sans-serif"}}>{multS}</span>
             </div>}
-            <div style={{display:"flex",gap:5,marginTop:5,flexWrap:"wrap"}}>
-              <button onClick={()=>setShowLevels(true)} style={{background:"none",border:"1px solid #1a0a2e",borderRadius:6,cursor:"pointer",color:"#7c6a9a",fontSize:10,padding:"2px 7px",fontFamily:"Cinzel,serif"}}>{getLvlName(lvi.level)} ▸</button>
+          </div>
+        </div>
+
+        {/* Hero core: XP ring + name block */}
+        <div style={{display:"flex",alignItems:"center",gap:16,marginBottom:14}}>
+
+          {/* Big XP ring */}
+          {(()=>{
+            const r=44,cx=52,cy=52,circ=2*Math.PI*r;
+            const dash=(xpP/100)*circ;
+            return (
+              <div style={{position:"relative",width:104,height:104,flexShrink:0}}>
+                <svg width={104} height={104} style={{transform:"rotate(-90deg)"}}>
+                  <circle cx={cx} cy={cy} r={r} fill="none" stroke="rgba(168,85,247,.1)" strokeWidth="7"/>
+                  <circle cx={cx} cy={cy} r={r} fill="none" stroke="url(#xpGrad)" strokeWidth="7"
+                    strokeDasharray={`${dash} ${circ}`} strokeLinecap="round"
+                    style={{filter:"drop-shadow(0 0 6px rgba(168,85,247,.7))",transition:"stroke-dasharray .8s ease"}}/>
+                  <defs>
+                    <linearGradient id="xpGrad" x1="0" y1="0" x2="1" y2="0">
+                      <stop offset="0%" stopColor="#7c3aed"/>
+                      <stop offset="100%" stopColor="#a855f7"/>
+                    </linearGradient>
+                  </defs>
+                </svg>
+                <div style={{position:"absolute",inset:0,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center"}}>
+                  <div style={{fontSize:22,fontWeight:900,color:"#a855f7",fontFamily:"Rajdhani,sans-serif",lineHeight:1,textShadow:"0 0 12px rgba(168,85,247,.6)"}}>{lvi.level}</div>
+                  <div style={{fontSize:8,color:"rgba(168,85,247,.6)",letterSpacing:1,fontFamily:"Cinzel,serif",marginTop:1}}>УРОВЕНЬ</div>
+                </div>
+              </div>
+            );
+          })()}
+
+          {/* Name + class + level name */}
+          <div style={{flex:1,minWidth:0}}>
+            {editName
+              ?<div style={{display:"flex",gap:5,marginBottom:6}}>
+                <input value={tmpName} onChange={e=>setTmpName(e.target.value)} onKeyDown={e=>e.key==="Enter"&&(upd(p=>({...p,name:tmpName||p.name})),setEditName(false))} autoFocus style={{...S.nameIn,width:"100%"}}/>
+                <button onClick={()=>{upd(p=>({...p,name:tmpName||p.name}));setEditName(false);}} style={S.bGreen}>✓</button>
+                <button onClick={()=>setEditName(false)} style={S.bGray}>✗</button>
+              </div>
+              :<div style={{display:"flex",alignItems:"center",gap:6,marginBottom:3}}>
+                <span style={{fontSize:20,fontWeight:900,color:"#d4a017",fontFamily:"Cinzel,serif",textShadow:"0 0 20px rgba(212,160,23,.4)",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{gs.name}</span>
+                {gs.deathCount>0&&<span style={{fontSize:9,color:"#e05555",border:"1px solid rgba(224,85,85,.3)",borderRadius:5,padding:"1px 5px",fontFamily:"Rajdhani,sans-serif",flexShrink:0}}>💀×{gs.deathCount}</span>}
+                <button onClick={()=>{setTmpName(gs.name);setEditName(true);}} style={{background:"none",border:"none",cursor:"pointer",color:"rgba(168,85,247,.4)",fontSize:10,padding:0,flexShrink:0}}>✏️</button>
+              </div>
+            }
+            {/* Level name */}
+            <button onClick={()=>setShowLevels(true)} style={{background:"rgba(168,85,247,.08)",border:"1px solid rgba(168,85,247,.2)",borderRadius:6,cursor:"pointer",color:"#a855f7",fontSize:9,padding:"3px 8px",fontFamily:"Cinzel,serif",marginBottom:5,display:"block",backdropFilter:"blur(6px)"}}>{getLvlName(lvi.level)} ▸</button>
+            {/* Class pill */}
+            <button onClick={()=>setShowClasses(true)} style={{background:`${cls.color}10`,border:`1px solid ${cls.color}30`,borderRadius:6,padding:"3px 8px",cursor:"pointer",display:"flex",alignItems:"center",gap:5,backdropFilter:"blur(6px)",boxShadow:`0 0 10px ${cls.color}15`}}>
+              <span style={{fontSize:10,fontWeight:700,color:cls.color,fontFamily:"Cinzel,serif"}}>{cls.name}</span>
+            </button>
+          </div>
+        </div>
+
+        {/* XP bar with label */}
+        <div style={{marginBottom:10}}>
+          <div style={{display:"flex",justifyContent:"space-between",fontSize:9,marginBottom:4}}>
+            <span style={{color:"rgba(168,85,247,.6)",fontWeight:700,letterSpacing:2,fontFamily:"Cinzel,serif"}}>ОПЫТ</span>
+            <span style={{color:"rgba(168,85,247,.5)",fontFamily:"Rajdhani,sans-serif"}}>{lvi.xpIn.toLocaleString()} / {lvi.xpTo.toLocaleString()}</span>
+          </div>
+          <div style={{height:6,background:"rgba(168,85,247,.08)",borderRadius:6,overflow:"hidden",border:"1px solid rgba(168,85,247,.12)",position:"relative"}}>
+            <div style={{height:"100%",width:`${xpP}%`,background:"linear-gradient(90deg,#5a3fa0,#a855f7)",borderRadius:6,transition:"width .8s ease",boxShadow:"0 0 8px rgba(168,85,247,.6)",position:"relative"}}>
+              <div style={{position:"absolute",right:0,top:0,bottom:0,width:3,background:"#fff",opacity:.3,filter:"blur(1px)"}}/>
             </div>
           </div>
-          <div style={{display:"flex",gap:5,flexWrap:"wrap",justifyContent:"flex-end"}}>
-            <div style={{...S.badge,border:"1px solid #5a3a0a",color:"#d4a017",background:"#1a1005",fontFamily:"Rajdhani,sans-serif"}}>💰 {gs.gold}</div>
-            {multS&&<div style={{...S.badge,border:"1px solid #5a2a00",color:"#f97316",background:"#1a0a00",fontFamily:"Rajdhani,sans-serif"}}>🔥{multS}</div>}
-            <button onClick={()=>setShowHpTip(true)} style={{...S.badge,border:`1px solid ${hpP<30?"#8b1a1a":"#1a3a1a"}`,color:hpP<30?"#e05555":"#4ade80",background:hpP<30?"#1a0808":"#081a08",cursor:"pointer",animation:hpP<30?"pulse .8s infinite":"none",fontFamily:"Rajdhani,sans-serif"}}>❤️ {gs.hp}</button>
-            <button onClick={()=>setShowSettings(true)} style={{...S.badge,background:"#0e0b1a",border:"1px solid #1a0a2e",color:"#5a3fa0",cursor:"pointer",fontSize:14}}>⚙️</button>
-          </div>
         </div>
 
-        {/* Class */}
-        <button onClick={()=>setShowClasses(true)} style={{background:`${cls.color}08`,border:`1px solid ${cls.color}25`,borderRadius:8,padding:"5px 10px",marginBottom:9,display:"flex",alignItems:"center",gap:7,width:"100%",cursor:"pointer",textAlign:"left"}}>
-          <span style={{fontSize:12,fontWeight:700,color:cls.color,fontFamily:"Cinzel,serif"}}>{cls.name}</span>
-          <span style={{fontSize:9,color:"#2a1f4a"}}>|</span>
-          <span style={{fontSize:10,color:"#5a3fa0",flex:1,fontFamily:"Rajdhani,sans-serif"}}>{cls.bonus}</span>
-          <span style={{fontSize:9,color:"#2a1f4a"}}>все ▸</span>
-        </button>
-
-        {/* Goal */}
-        {gs.goal&&<button onClick={()=>setShowGoal(true)} style={{background:"#0a0814",border:"1px solid #d4a01718",borderRadius:8,padding:"5px 10px",marginBottom:9,width:"100%",cursor:"pointer",textAlign:"left",display:"flex",alignItems:"center",gap:7}}>
-          <span style={{fontSize:13}}>🌟</span>
-          <span style={{fontSize:11,color:"#d4a01770",fontStyle:"italic",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",flex:1,fontFamily:"Rajdhani,sans-serif"}}>{gs.goal}</span>
-        </button>}
-
-        {/* XP */}
-        <div style={{marginBottom:8}}>
-          <div style={{display:"flex",justifyContent:"space-between",fontSize:10,marginBottom:3}}>
-            <span style={{color:"#5a3fa0",fontWeight:700,letterSpacing:1,fontFamily:"Cinzel,serif"}}>ОПЫТ</span>
-            <span style={{color:"#7c6a9a",fontFamily:"Rajdhani,sans-serif"}}>{lvi.xpIn.toLocaleString()} / {lvi.xpTo.toLocaleString()}</span>
+        {/* Bottom: quests progress + goal + total XP */}
+        <div style={{display:"flex",alignItems:"center",gap:8}}>
+          {/* Quest dots */}
+          <div style={{display:"flex",gap:3,alignItems:"center"}}>
+            {allDaily.length>0&&allDaily.slice(0,8).map((q,i)=>(
+              <div key={i} style={{width:6,height:6,borderRadius:"50%",background:gs.daily[q.id]?"#a855f7":"rgba(168,85,247,.2)",boxShadow:gs.daily[q.id]?"0 0 5px rgba(168,85,247,.7)":"none",transition:"all .3s"}}/>
+            ))}
+            {allDaily.length>8&&<span style={{fontSize:8,color:"rgba(168,85,247,.4)",fontFamily:"Rajdhani,sans-serif"}}>+{allDaily.length-8}</span>}
           </div>
-          <div style={{height:10,background:"#0a0714",borderRadius:5,overflow:"hidden",border:"1px solid #1a0a2e"}}>
-            <div style={{height:"100%",width:`${xpP}%`,background:"linear-gradient(90deg,#5a3fa0,#7c3aed,#a855f7)",borderRadius:5,transition:"width .6s",boxShadow:"0 0 10px #7c3aed80"}}/>
-          </div>
-        </div>
-
-        {/* Daily progress */}
-        <div style={{display:"flex",alignItems:"center",gap:7}}>
-          <span style={{fontSize:10,color:"#2a1f4a",whiteSpace:"nowrap",fontFamily:"Rajdhani,sans-serif"}}>КВЕСТЫ {doneN}/{allDaily.length}</span>
-          <div style={{flex:1,height:3,background:"#1a0a2e",borderRadius:2}}>
-            <div style={{height:"100%",width:`${allDaily.length>0?(doneN/allDaily.length)*100:0}%`,background:"#d4a017",borderRadius:2,transition:"width .4s",boxShadow:"0 0 6px #d4a01780"}}/>
-          </div>
-          <span style={{fontSize:10,color:"#d4a017",fontWeight:700,fontFamily:"Rajdhani,sans-serif"}}>{gs.totalXp.toLocaleString()} XP</span>
+          <span style={{fontSize:9,color:"rgba(168,85,247,.4)",fontFamily:"Rajdhani,sans-serif"}}>{doneN}/{allDaily.length}</span>
+          {/* Goal */}
+          {gs.goal&&<button onClick={()=>setShowGoal(true)} style={{flex:1,background:"rgba(212,160,23,.05)",border:"1px solid rgba(212,160,23,.12)",borderRadius:6,padding:"4px 8px",cursor:"pointer",textAlign:"left",display:"flex",alignItems:"center",gap:5,backdropFilter:"blur(6px)",overflow:"hidden"}}>
+            <span style={{fontSize:10}}>🌟</span>
+            <span style={{fontSize:9,color:"rgba(212,160,23,.5)",fontStyle:"italic",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",fontFamily:"Rajdhani,sans-serif"}}>{gs.goal}</span>
+          </button>}
+          <span style={{fontSize:10,color:"#d4a017",fontWeight:800,fontFamily:"Rajdhani,sans-serif",whiteSpace:"nowrap",textShadow:"0 0 8px rgba(212,160,23,.4)"}}>{gs.totalXp.toLocaleString()} XP</span>
         </div>
       </div>
 
@@ -1358,29 +1430,35 @@ export default function App() {
       </div>}
 
       {/* Sprint banners */}
-      {activeSprints.map(sp=><div key={sp.id} style={{background:"#07060d",borderBottom:"1px solid #1a0a2e",padding:"6px 13px",display:"flex",alignItems:"center",gap:9}}>
+      {activeSprints.map(sp=><div key={sp.id} style={{background:"rgba(7,6,13,.8)",borderBottom:"1px solid rgba(168,85,247,.1)",padding:"6px 13px",display:"flex",alignItems:"center",gap:9}}>
         <span style={{fontSize:12}}>🎯</span>
         <div style={{flex:1}}>
           <div style={{display:"flex",justifyContent:"space-between",marginBottom:2}}>
             <span style={{fontSize:11,fontWeight:700,color:"#e2d5f0",fontFamily:"Cinzel,serif"}}>{sp.name}</span>
             <span style={{fontSize:10,color:daysLeft(sp.endDate)<=3?"#f59e0b":"#5a3fa0",fontFamily:"Rajdhani,sans-serif"}}>{daysLeft(sp.endDate)} дн.</span>
           </div>
-          <div style={{height:3,background:"#1a0a2e",borderRadius:2}}>
+          <div style={{height:3,background:"rgba(168,85,247,.1)",borderRadius:2}}>
             <div style={{height:"100%",width:`${Math.max(5,Math.round(((sp.duration-daysLeft(sp.endDate))/sp.duration)*100))}%`,background:"linear-gradient(90deg,#5a3fa0,#7c3aed)",borderRadius:2,boxShadow:"0 0 5px #7c3aed50"}}/>
           </div>
         </div>
       </div>)}
 
-      {/* ══ TABS ══ */}
-      <div style={S.tabs}>
-        {[["quests","⚔️ Квесты"],["sprints","🎯 Спринты"],["habits","🛡 Привычки"],["shop","🔓 Разрешения"],["chronicles","📊 Статистика"]].map(([t,l])=>(
-          <button key={t} onClick={()=>setTab(t)} style={{...S.tab,color:tab===t?"#d4a017":"#2a1f4a",borderBottom:`2px solid ${tab===t?"#d4a017":"transparent"}`,fontWeight:tab===t?700:500,fontFamily:tab===t?"Cinzel,serif":"inherit",fontSize:tab===t?10:9}}>{l}</button>
-        ))}
+      {/* ══ FLOATING BOTTOM TABS ══ */}
+      <div style={{position:"fixed",bottom:16,left:"50%",transform:"translateX(-50%)",zIndex:100,width:"calc(min(520px,100vw) - 24px)"}}>
+        <div style={{display:"flex",background:"rgba(10,5,25,.85)",backdropFilter:"blur(20px)",WebkitBackdropFilter:"blur(20px)",border:"1px solid rgba(168,85,247,.2)",borderRadius:20,padding:"5px",gap:3,boxShadow:"0 8px 32px rgba(0,0,0,.6),0 0 0 1px rgba(168,85,247,.05),inset 0 1px 0 rgba(255,255,255,.05)"}}>
+          {[["quests","⚔️","Квесты"],["sprints","🎯","Спринты"],["habits","🛡","Привычки"],["shop","🔓","Разреш."],["chronicles","📊","Стата"]].map(([t,ico,l])=>(
+            <button key={t} onClick={()=>setTab(t)} style={{flex:1,padding:"8px 2px 6px",background:tab===t?"rgba(168,85,247,.18)":"none",border:"none",borderRadius:14,cursor:"pointer",display:"flex",flexDirection:"column",alignItems:"center",gap:2,transition:"all .2s",boxShadow:tab===t?"0 0 12px rgba(168,85,247,.2),inset 0 1px 0 rgba(168,85,247,.1)":"none"}}>
+              <span style={{fontSize:16,filter:tab===t?"drop-shadow(0 0 6px rgba(168,85,247,.8))":"none",transition:"filter .2s"}}>{ico}</span>
+              <span style={{fontSize:8,fontWeight:tab===t?700:400,color:tab===t?"#a855f7":"rgba(168,85,247,.35)",fontFamily:tab===t?"Cinzel,serif":"inherit",letterSpacing:tab===t?.5:0,transition:"all .2s"}}>{l}</span>
+              {tab===t&&<div style={{width:16,height:2,background:"#a855f7",borderRadius:1,boxShadow:"0 0 6px rgba(168,85,247,.8)"}}/>}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* ══ QUESTS ══ */}
       {tab==="quests"&&<div>
-        <div style={{display:"flex",background:"#07060d",borderBottom:"1px solid #1a0a2e",padding:"0 10px",gap:1}}>
+        <div style={{display:"flex",background:"rgba(7,6,13,.8)",borderBottom:"1px solid rgba(168,85,247,.1)",padding:"0 10px",gap:1}}>
           {[["daily","Дейли"],["boss","Боссы"],["once","Разовые"],["rest","Отдых"]].map(([t,l])=>(
             <button key={t} onClick={()=>setSub(t)} style={{background:"none",border:"none",cursor:"pointer",color:sub===t?"#d4a017":"#2a1f4a",fontWeight:sub===t?700:400,fontSize:11,padding:"9px 8px 8px",borderBottom:`2px solid ${sub===t?"#d4a017":"transparent"}`,fontFamily:sub===t?"Cinzel,serif":"inherit"}}>{l}</button>
           ))}
@@ -1401,32 +1479,48 @@ export default function App() {
                   const q=mergeQ(def),done=gs.daily[q.id],isEd=editingQ===q.id;
                   const bXP=Math.min(Math.floor((q.xp||50)*MAX_XP_MULT),multS?Math.floor((q.xp||50)*(1+gs.combo*0.1)):(q.xp||50));
                   return <div key={q.id}>
-                    {isEd?<div style={{background:"#0e0b1a",border:`1px solid ${st.color}50`,borderRadius:12,padding:12,marginBottom:8}}>
+                    {isEd?<div style={{background:"rgba(15,8,35,.7)",border:`1px solid ${st.color}50`,borderRadius:16,padding:14,marginBottom:8,backdropFilter:"blur(12px)"}}>
                       <input value={editBuf.title||""} onChange={e=>setEditBuf(b=>({...b,title:e.target.value}))} placeholder="Название" style={{...S.inp,marginBottom:6}}/>
                       <input value={editBuf.desc||""} onChange={e=>setEditBuf(b=>({...b,desc:e.target.value}))} placeholder="Описание" style={{...S.inp,marginBottom:6}}/>
                       <div style={{display:"flex",gap:7,alignItems:"center",marginBottom:8}}>
                         <input type="number" value={editBuf.xp||50} onChange={e=>setEditBuf(b=>({...b,xp:Math.min(200,parseInt(e.target.value)||50)}))} style={{...S.inp,width:70}}/>
-                        <span style={{color:"#5a3fa0",fontSize:11,fontFamily:"Rajdhani,sans-serif"}}>XP (макс 200)</span>
+                        <span style={{color:"#a855f7",fontSize:11,fontFamily:"Rajdhani,sans-serif"}}>XP (макс 200)</span>
                       </div>
                       <div style={{display:"flex",gap:7}}>
-                        <button onClick={saveQEdit} style={{...S.bWin,flex:1,padding:"7px"}}>✓</button>
-                        <button onClick={()=>{upd(prev=>({...prev,customDaily:(prev.customDaily||[]).filter(x=>x.id!==q.id)}));setEditingQ(null);}} style={{...S.bFail,padding:"7px 11px"}}>🗑</button>
-                        <button onClick={()=>setEditingQ(null)} style={{...S.bGray,padding:"7px 11px"}}>✗</button>
+                        <button onClick={saveQEdit} style={{...S.bWin,flex:1,padding:"8px"}}>✓</button>
+                        <button onClick={()=>{upd(prev=>({...prev,customDaily:(prev.customDaily||[]).filter(x=>x.id!==q.id)}));setEditingQ(null);}} style={{...S.bFail,padding:"8px 11px"}}>🗑</button>
+                        <button onClick={()=>setEditingQ(null)} style={{...S.bGray,padding:"8px 11px"}}>✗</button>
                       </div>
-                    </div>:<div style={{background:done?"#081a08":"#0e0b1a",border:`1px solid ${done?"#1a5a1a":"#1a0a2e"}`,borderRadius:11,padding:"9px 10px",marginBottom:5,display:"flex",alignItems:"center",gap:8,opacity:done?.6:1,transition:"all .2s"}}
-                      onMouseEnter={e=>{if(!done){e.currentTarget.style.borderColor=st.color+"50";e.currentTarget.style.transform="translateX(2px)";}}}
-                      onMouseLeave={e=>{if(!done){e.currentTarget.style.borderColor="#1a0a2e";e.currentTarget.style.transform="none";}}}>
-                      <span style={{fontSize:22,cursor:done?"default":"pointer"}} onClick={()=>!done&&setPendingQ({q,isBoss:false})}>{q.icon||"⚡"}</span>
-                      <div style={{flex:1,cursor:done?"default":"pointer"}} onClick={()=>!done&&setPendingQ({q,isBoss:false})}>
-                        <div style={{fontWeight:700,fontSize:12,color:done?"#4ade80":"#e2d5f0",textDecoration:done?"line-through":"none",fontFamily:"Rajdhani,sans-serif"}}>{q.title}</div>
-                        <div style={{fontSize:10,color:"#2a1f4a",marginTop:1,fontFamily:"Rajdhani,sans-serif"}}>{q.desc}</div>
-                        <div style={{fontSize:10,marginTop:2,display:"flex",gap:6}}>
-                          <span style={{color:"#d4a017",fontWeight:600,fontFamily:"Rajdhani,sans-serif"}}>+{bXP} XP</span>
-                          {multS&&!done&&<span style={{color:st.color,fontSize:10,fontFamily:"Rajdhani,sans-serif"}}>{multS}</span>}
+                    </div>:<div
+                      onClick={()=>!done&&setPendingQ({q,isBoss:false})}
+                      style={{
+                        display:"flex",alignItems:"center",gap:0,marginBottom:7,borderRadius:16,overflow:"hidden",
+                        background:done?"rgba(5,20,5,.5)":"rgba(15,8,35,.55)",
+                        border:`1px solid ${done?"rgba(74,222,128,.2)":"rgba(168,85,247,.12)"}`,
+                        backdropFilter:"blur(12px)",
+                        boxShadow:done?`0 0 14px rgba(74,222,128,.08)`:undefined,
+                        opacity:done?.65:1,cursor:done?"default":"pointer",
+                        transition:"all .25s",
+                      }}
+                      onMouseEnter={e=>{if(!done){e.currentTarget.style.borderColor=st.color+"60";e.currentTarget.style.boxShadow=`0 0 18px ${st.color}18`;e.currentTarget.style.transform="translateY(-1px)";}}}
+                      onMouseLeave={e=>{if(!done){e.currentTarget.style.borderColor="rgba(168,85,247,.12)";e.currentTarget.style.boxShadow="none";e.currentTarget.style.transform="none";}}}>
+                      {/* Thick color bar left */}
+                      <div style={{width:4,alignSelf:"stretch",background:done?"#4ade80":st.color,flexShrink:0,boxShadow:done?`0 0 8px rgba(74,222,128,.6)`:`0 0 8px ${st.color}80`}}/>
+                      {/* Icon */}
+                      <div style={{padding:"12px 10px 12px 12px",fontSize:20,flexShrink:0}}>{q.icon||"⚡"}</div>
+                      {/* Content */}
+                      <div style={{flex:1,padding:"12px 4px 12px 0",minWidth:0}}>
+                        <div style={{fontWeight:700,fontSize:13,color:done?"#4ade80":"#e2d5f0",textDecoration:done?"line-through":"none",fontFamily:"Rajdhani,sans-serif",lineHeight:1.2}}>{q.title}</div>
+                        <div style={{fontSize:10,color:"rgba(168,85,247,.4)",marginTop:2,fontFamily:"Rajdhani,sans-serif",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{q.desc}</div>
+                        <div style={{fontSize:11,marginTop:4,display:"flex",gap:8,alignItems:"center"}}>
+                          <span style={{color:"#d4a017",fontWeight:700,fontFamily:"Rajdhani,sans-serif"}}>+{bXP} XP</span>
+                          {multS&&!done&&<span style={{color:st.color,fontSize:10,fontFamily:"Rajdhani,sans-serif",background:`${st.color}15`,padding:"1px 5px",borderRadius:4}}>{multS}</span>}
                         </div>
                       </div>
-                      <button onClick={()=>{setEditingQ(q.id);setEditBuf({title:q.title,desc:q.desc,xp:q.xp});}} style={{background:"none",border:"none",cursor:"pointer",color:"#2a1f4a",fontSize:12,padding:"2px"}}>✏️</button>
-                      <div onClick={()=>!done&&setPendingQ({q,isBoss:false})} style={{width:28,height:28,borderRadius:7,border:`2px solid ${done?"#4ade80":st.color}`,background:done?"#0a2a0a":"transparent",display:"flex",alignItems:"center",justifyContent:"center",fontSize:12,color:done?"#4ade80":st.color,flexShrink:0,cursor:done?"default":"pointer",boxShadow:done?"0 0 8px #4ade8025":""}}>
+                      {/* Edit btn */}
+                      <button onClick={e=>{e.stopPropagation();setEditingQ(q.id);setEditBuf({title:q.title,desc:q.desc,xp:q.xp});}} style={{background:"none",border:"none",cursor:"pointer",color:"rgba(168,85,247,.3)",fontSize:12,padding:"12px 6px",flexShrink:0}}>✏️</button>
+                      {/* Big checkbox */}
+                      <div style={{width:36,height:36,borderRadius:10,border:`2px solid ${done?"rgba(74,222,128,.6)":st.color+"80"}`,background:done?"rgba(74,222,128,.12)":"rgba(15,8,35,.4)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:16,color:done?"#4ade80":st.color,flexShrink:0,margin:"0 12px 0 4px",boxShadow:done?"0 0 12px rgba(74,222,128,.2)":`0 0 8px ${st.color}15`,transition:"all .2s"}}>
                         {done?"✓":""}
                       </div>
                     </div>}
@@ -1434,7 +1528,7 @@ export default function App() {
                 })}
               </div>;
             })}
-            {showAddQ?<div style={{background:"#0e0b1a",border:"1px solid #2a1f4a",borderRadius:12,padding:13,marginBottom:10}}>
+            {showAddQ?<div style={{background:"rgba(15,8,35,.55)",border:"1px solid rgba(168,85,247,.2)",borderRadius:12,padding:13,marginBottom:10}}>
               <div style={{fontSize:12,color:"#d4a017",fontWeight:700,marginBottom:10,fontFamily:"Cinzel,serif"}}>+ НОВЫЙ ДЕЙЛИ КВЕСТ</div>
               <input value={addQBuf.title} onChange={e=>setAddQBuf(b=>({...b,title:e.target.value}))} placeholder="Название..." style={{...S.inp,marginBottom:6}}/>
               <input value={addQBuf.desc} onChange={e=>setAddQBuf(b=>({...b,desc:e.target.value}))} placeholder="Описание..." style={{...S.inp,marginBottom:7}}/>
@@ -1456,7 +1550,7 @@ export default function App() {
           </div>}
 
           {sub==="boss"&&<div>
-            <div style={{background:"#07060d",border:"1px solid #1a0a2e",borderRadius:10,padding:"10px 13px",marginBottom:12,fontSize:11,color:"#5a3fa0",lineHeight:1.7,fontFamily:"Rajdhani,sans-serif"}}>
+            <div style={{background:"rgba(7,6,13,.8)",border:"1px solid rgba(168,85,247,.12)",borderRadius:10,padding:"10px 13px",marginBottom:12,fontSize:11,color:"#5a3fa0",lineHeight:1.7,fontFamily:"Rajdhani,sans-serif"}}>
               ⚔️ Боссы — недельные вызовы. Добавляй из шаблонов или создавай свои. Честно отмечай победу или провал.
             </div>
             {allBossQuests.map(q=>{
@@ -1464,16 +1558,16 @@ export default function App() {
               const isEd=editingQ===q.id;
               const merged=mergeQ(q);
               return <div key={q.id}>
-                {isEd?<div style={{background:"#0e0b1a",border:"1px solid #5a3fa0",borderRadius:12,padding:13,marginBottom:11}}>
+                {isEd?<div style={{background:"rgba(15,8,35,.7)",border:"1px solid rgba(168,85,247,.3)",borderRadius:16,padding:14,marginBottom:11,backdropFilter:"blur(12px)"}}>
                   <input value={editBuf.title||""} onChange={e=>setEditBuf(b=>({...b,title:e.target.value}))} placeholder="Название" style={{...S.inp,marginBottom:6}}/>
                   <div style={{display:"flex",gap:8,marginBottom:8}}>
-                    <div style={{flex:1}}><div style={{fontSize:10,color:"#5a3fa0",marginBottom:3}}>XP</div><input type="number" value={editBuf.xp||250} onChange={e=>setEditBuf(b=>({...b,xp:e.target.value}))} style={S.inp}/></div>
+                    <div style={{flex:1}}><div style={{fontSize:10,color:"#a855f7",marginBottom:3}}>XP</div><input type="number" value={editBuf.xp||250} onChange={e=>setEditBuf(b=>({...b,xp:e.target.value}))} style={S.inp}/></div>
                   </div>
-                  <div style={{fontSize:11,color:"#5a3fa0",marginBottom:6,fontFamily:"Cinzel,serif"}}>ШТРАФ ЗА ПРОВАЛ</div>
+                  <div style={{fontSize:11,color:"#a855f7",marginBottom:6,fontFamily:"Cinzel,serif"}}>ШТРАФ ЗА ПРОВАЛ</div>
                   <div style={{display:"flex",gap:5,marginBottom:8}}>
                     {BOSS_PENALTIES.map(p=>(
-                      <button key={p.hp} onClick={()=>setEditBuf(b=>({...b,pen:p.hp}))} style={{flex:1,background:(editBuf.pen||30)===p.hp?`${p.color}12`:"#07060d",border:`1px solid ${(editBuf.pen||30)===p.hp?p.color:"#1a0a2e"}`,borderRadius:9,padding:"7px 4px",cursor:"pointer",color:p.color,fontSize:10,fontWeight:(editBuf.pen||30)===p.hp?700:400,textAlign:"center",lineHeight:1.4,fontFamily:"Rajdhani,sans-serif"}}>
-                        {p.label}<br/><span style={{fontSize:9,color:"#5a3fa0"}}>-{p.hp}HP</span>
+                      <button key={p.hp} onClick={()=>setEditBuf(b=>({...b,pen:p.hp}))} style={{flex:1,background:(editBuf.pen||30)===p.hp?`${p.color}15`:"rgba(6,4,15,.6)",border:`1px solid ${(editBuf.pen||30)===p.hp?p.color:"rgba(168,85,247,.15)"}`,borderRadius:10,padding:"8px 4px",cursor:"pointer",color:p.color,fontSize:10,fontWeight:(editBuf.pen||30)===p.hp?700:400,textAlign:"center",lineHeight:1.4,fontFamily:"Rajdhani,sans-serif"}}>
+                        {p.label}<br/><span style={{fontSize:9,color:"rgba(168,85,247,.4)"}}>-{p.hp}HP</span>
                       </button>
                     ))}
                   </div>
@@ -1481,41 +1575,57 @@ export default function App() {
                     <button onClick={saveQEdit} style={{...S.bWin,flex:1,padding:"8px"}}>✓</button>
                     <button onClick={()=>setEditingQ(null)} style={{...S.bGray,padding:"8px 11px"}}>✗</button>
                   </div>
-                </div>:<div style={{background:status==="done"?"#081a08":status==="fail"?"#1a0808":"#0e0b1a",border:`1px solid ${status==="done"?"#1a5a1a":status==="fail"?"#5a1a1a":"#3a2a6a"}`,borderRadius:13,padding:"11px 13px",marginBottom:10}}>
-                  <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:8}}>
-                    <span style={{fontSize:26}}>{q.icon}</span>
-                    <div style={{flex:1}}>
-                      <div style={{fontWeight:800,fontSize:13,color:status==="done"?"#4ade80":status==="fail"?"#e05555":"#c4b5fd",fontFamily:"Cinzel,serif"}}>{merged.title}</div>
-                      <div style={{fontSize:10,color:STATS[q.stat]?.color,marginTop:2,fontFamily:"Rajdhani,sans-serif"}}>{STATS[q.stat]?.icon} {STATS[q.stat]?.name}</div>
+                </div>:<div style={{
+                  borderRadius:18,overflow:"hidden",marginBottom:12,
+                  background:status==="done"?"rgba(5,20,5,.5)":status==="fail"?"rgba(25,5,5,.5)":"rgba(15,8,35,.55)",
+                  border:`1px solid ${status==="done"?"rgba(74,222,128,.25)":status==="fail"?"rgba(224,85,85,.25)":"rgba(124,58,237,.25)"}`,
+                  backdropFilter:"blur(14px)",
+                  boxShadow:status==="done"?"0 0 20px rgba(74,222,128,.08)":status==="fail"?"0 0 20px rgba(224,85,85,.08)":"0 0 20px rgba(124,58,237,.06)",
+                }}>
+                  {/* Top accent bar */}
+                  <div style={{height:3,background:status==="done"?"linear-gradient(90deg,#4ade80,#22c55e)":status==="fail"?"linear-gradient(90deg,#e05555,#dc2626)":"linear-gradient(90deg,#7c3aed,#a855f7)",boxShadow:status==="done"?"0 0 8px rgba(74,222,128,.5)":status==="fail"?"0 0 8px rgba(224,85,85,.5)":"0 0 8px rgba(168,85,247,.5)"}}/>
+                  <div style={{padding:"13px 14px"}}>
+                    <div style={{display:"flex",alignItems:"flex-start",gap:10,marginBottom:10}}>
+                      <span style={{fontSize:28,filter:status==="done"?"drop-shadow(0 0 8px rgba(74,222,128,.5))":status==="fail"?"drop-shadow(0 0 8px rgba(224,85,85,.5))":"drop-shadow(0 0 8px rgba(168,85,247,.4))"}}>{q.icon}</span>
+                      <div style={{flex:1}}>
+                        <div style={{fontWeight:800,fontSize:14,color:status==="done"?"#4ade80":status==="fail"?"#e05555":"#e2d5f0",fontFamily:"Cinzel,serif",lineHeight:1.3}}>{merged.title}</div>
+                        <div style={{fontSize:10,color:STATS[q.stat]?.color,marginTop:3,fontFamily:"Rajdhani,sans-serif",display:"flex",alignItems:"center",gap:4}}>
+                          <span style={{background:`${STATS[q.stat]?.color}18`,padding:"1px 6px",borderRadius:4}}>{STATS[q.stat]?.icon} {STATS[q.stat]?.name}</span>
+                        </div>
+                      </div>
+                      {!status&&<div style={{display:"flex",gap:5}}>
+                        <button onClick={()=>{setEditingQ(q.id);setEditBuf({title:merged.title,xp:merged.xp,pen:merged.pen||40});}} style={{background:"none",border:"none",cursor:"pointer",color:"rgba(168,85,247,.35)",fontSize:12,padding:"2px"}}>✏️</button>
+                        <button onClick={()=>delCustomBoss(q.id)} style={{background:"none",border:"none",cursor:"pointer",color:"rgba(224,85,85,.4)",fontSize:12,padding:"2px"}}>🗑</button>
+                      </div>}
                     </div>
-                    {!status&&<div style={{display:"flex",gap:5}}>
-                      <button onClick={()=>{setEditingQ(q.id);setEditBuf({title:merged.title,xp:merged.xp,pen:merged.pen||40});}} style={{background:"none",border:"none",cursor:"pointer",color:"#2a1f4a",fontSize:12,padding:"2px"}}>✏️</button>
-                      <button onClick={()=>delCustomBoss(q.id)} style={{background:"none",border:"none",cursor:"pointer",color:"#3a0a0a",fontSize:12,padding:"2px"}}>🗑</button>
-                    </div>}
-                  </div>
-                  <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
-                    <div style={{display:"flex",gap:9}}>
-                      <span style={{color:"#d4a017",fontSize:12,fontWeight:700,fontFamily:"Rajdhani,sans-serif"}}>+{merged.xp} XP</span>
-                      <span style={{color:"#e05555",fontSize:11,fontFamily:"Rajdhani,sans-serif"}}>⚠️ -{merged.pen||40} HP</span>
+                    <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+                      <div style={{display:"flex",gap:10,alignItems:"center"}}>
+                        <div style={{background:"rgba(212,160,23,.1)",border:"1px solid rgba(212,160,23,.2)",borderRadius:8,padding:"4px 10px"}}>
+                          <span style={{color:"#d4a017",fontSize:12,fontWeight:700,fontFamily:"Rajdhani,sans-serif"}}>+{merged.xp} XP</span>
+                        </div>
+                        <div style={{background:"rgba(224,85,85,.1)",border:"1px solid rgba(224,85,85,.2)",borderRadius:8,padding:"4px 10px"}}>
+                          <span style={{color:"#e05555",fontSize:11,fontFamily:"Rajdhani,sans-serif"}}>-{merged.pen||40} HP</span>
+                        </div>
+                      </div>
+                      {!status&&<div style={{display:"flex",gap:7}}>
+                        <button onClick={()=>clickBossWin(merged)} style={{...S.bWin,padding:"7px 14px",fontSize:12}}>✓ Победа</button>
+                        <button onClick={()=>failBossQ(merged)} style={{...S.bFail,padding:"7px 14px",fontSize:12}}>✗ Провал</button>
+                      </div>}
+                      {status==="done"&&<span style={{color:"#4ade80",fontWeight:800,fontSize:13,fontFamily:"Cinzel,serif",textShadow:"0 0 10px rgba(74,222,128,.5)"}}>⚔️ ПОБЕДА</span>}
+                      {status==="fail"&&<span style={{color:"#e05555",fontWeight:800,fontSize:13,fontFamily:"Cinzel,serif",textShadow:"0 0 10px rgba(224,85,85,.5)"}}>💀 ПРОВАЛ</span>}
                     </div>
-                    {!status&&<div style={{display:"flex",gap:6}}>
-                      <button onClick={()=>clickBossWin(merged)} style={S.bWin}>✓ Победа</button>
-                      <button onClick={()=>failBossQ(merged)} style={S.bFail}>✗ Провал</button>
-                    </div>}
-                    {status==="done"&&<span style={{color:"#4ade80",fontWeight:800,fontSize:12,fontFamily:"Cinzel,serif"}}>⚔️ ПОБЕДА</span>}
-                    {status==="fail"&&<span style={{color:"#e05555",fontWeight:800,fontSize:12,fontFamily:"Cinzel,serif"}}>💀 ПРОВАЛ</span>}
                   </div>
                 </div>}
               </div>;
             })}
-            {allBossQuests.length===0&&<div style={{textAlign:"center",color:"#2a1f4a",padding:"30px 0",fontFamily:"Cinzel,serif",fontSize:13}}>Нет боссов. Добавь из шаблонов!</div>}
-            {showBossTemplates&&<div style={{background:"#0e0b1a",border:"1px solid #2a1f4a",borderRadius:14,padding:14,marginBottom:12}}>
+            {allBossQuests.length===0&&<div style={{textAlign:"center",color:"rgba(168,85,247,.35)",padding:"30px 0",fontFamily:"Cinzel,serif",fontSize:13}}>Нет боссов. Добавь из шаблонов!</div>}
+            {showBossTemplates&&<div style={{background:"rgba(15,8,35,.55)",border:"1px solid rgba(168,85,247,.2)",borderRadius:14,padding:14,marginBottom:12}}>
               <div style={{fontSize:12,color:"#d4a017",fontWeight:700,marginBottom:12,fontFamily:"Cinzel,serif"}}>📋 ШАБЛОНЫ</div>
               {Object.entries(BOSS_TEMPLATES).map(([stat,templates])=>(
                 <div key={stat} style={{marginBottom:10}}>
                   <div style={{fontSize:10,color:STATS[stat]?.color,fontWeight:700,marginBottom:6,fontFamily:"Cinzel,serif",letterSpacing:1}}>{STATS[stat]?.icon} {STATS[stat]?.name}</div>
                   {templates.map((t,i)=>(
-                    <button key={i} onClick={()=>addBossFromTemplate(t)} style={{width:"100%",background:"#07060d",border:"1px solid #1a0a2e",borderRadius:9,padding:"8px 12px",marginBottom:4,cursor:"pointer",textAlign:"left",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+                    <button key={i} onClick={()=>addBossFromTemplate(t)} style={{width:"100%",background:"rgba(7,6,13,.8)",border:"1px solid rgba(168,85,247,.12)",borderRadius:9,padding:"8px 12px",marginBottom:4,cursor:"pointer",textAlign:"left",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
                       <span style={{fontSize:12,color:"#7c6a9a",fontFamily:"Rajdhani,sans-serif"}}>{t.title}</span>
                       <span style={{color:STATS[stat]?.color,fontSize:11}}>+</span>
                     </button>
@@ -1528,7 +1638,7 @@ export default function App() {
               <button onClick={()=>setShowBossTemplates(true)} style={{...S.bWin,flex:1,padding:"10px",fontSize:12,fontFamily:"Cinzel,serif"}}>📋 Из шаблонов</button>
               <button onClick={()=>setShowAddBoss(true)} style={{...S.bGray,flex:1,padding:"10px",fontSize:12}}>+ Свой босс</button>
             </div>}
-            {showAddBoss&&<div style={{background:"#0e0b1a",border:"1px solid #2a1f4a",borderRadius:12,padding:13,marginTop:8}}>
+            {showAddBoss&&<div style={{background:"rgba(15,8,35,.55)",border:"1px solid rgba(168,85,247,.2)",borderRadius:12,padding:13,marginTop:8}}>
               <input value={bossBuf.title} onChange={e=>setBossBuf(b=>({...b,title:e.target.value}))} placeholder="Название босс-квеста..." style={{...S.inp,marginBottom:7}}/>
               <div style={{display:"flex",gap:8,marginBottom:9}}>
                 <div style={{flex:1}}><div style={{fontSize:10,color:"#5a3fa0",marginBottom:3}}>Стат</div>
@@ -1541,7 +1651,7 @@ export default function App() {
               <div style={{fontSize:11,color:"#5a3fa0",marginBottom:6,fontFamily:"Cinzel,serif"}}>ШТРАФ ЗА ПРОВАЛ</div>
               <div style={{display:"flex",gap:6,marginBottom:9}}>
                 {BOSS_PENALTIES.map(p=>(
-                  <button key={p.hp} onClick={()=>setBossBuf(b=>({...b,pen:p.hp}))} style={{flex:1,background:bossBuf.pen===p.hp?`${p.color}12`:"#07060d",border:`1px solid ${bossBuf.pen===p.hp?p.color:"#1a0a2e"}`,borderRadius:9,padding:"8px 4px",cursor:"pointer",color:p.color,fontSize:11,fontWeight:bossBuf.pen===p.hp?700:400,textAlign:"center",lineHeight:1.4,fontFamily:"Rajdhani,sans-serif"}}>
+                  <button key={p.hp} onClick={()=>setBossBuf(b=>({...b,pen:p.hp}))} style={{flex:1,background:bossBuf.pen===p.hp?`${p.color}12`:"#07060d",border:`1px solid ${bossBuf.pen===p.hp?p.color:"rgba(168,85,247,.25)"}`,borderRadius:9,padding:"8px 4px",cursor:"pointer",color:p.color,fontSize:11,fontWeight:bossBuf.pen===p.hp?700:400,textAlign:"center",lineHeight:1.4,fontFamily:"Rajdhani,sans-serif"}}>
                     {p.label}<br/><span style={{fontSize:10,color:"#5a3fa0"}}>-{p.hp}HP</span>
                   </button>
                 ))}
@@ -1555,7 +1665,7 @@ export default function App() {
 
           {sub==="once"&&<div>
             {!showAddQ?<button onClick={()=>setShowAddQ(true)} style={{...S.bWin,width:"100%",padding:"11px",fontSize:13,marginBottom:12,fontFamily:"Cinzel,serif"}}>+ Разовый квест</button>
-            :<div style={{background:"#0e0b1a",border:"1px solid #2a1f4a",borderRadius:12,padding:13,marginBottom:12}}>
+            :<div style={{background:"rgba(15,8,35,.55)",border:"1px solid rgba(168,85,247,.2)",borderRadius:12,padding:13,marginBottom:12}}>
               <input value={addQBuf.title} onChange={e=>setAddQBuf(b=>({...b,title:e.target.value}))} placeholder="Название..." style={{...S.inp,marginBottom:7}}/>
               <div style={{display:"flex",gap:8,marginBottom:9}}>
                 <div style={{flex:1}}><div style={{fontSize:10,color:"#5a3fa0",marginBottom:3}}>Стат</div>
@@ -1576,7 +1686,7 @@ export default function App() {
               </div>
             </div>}
             {(gs.customOnce||[]).filter(q=>!gs.daily[q.id]).map(q=>(
-              <div key={q.id} style={{background:"#0e0b1a",border:"1px solid #1a0a2e",borderRadius:10,padding:"9px 11px",marginBottom:6,display:"flex",alignItems:"center",gap:8}}>
+              <div key={q.id} style={{background:"rgba(15,8,35,.55)",border:"1px solid rgba(168,85,247,.12)",borderRadius:10,padding:"9px 11px",marginBottom:6,display:"flex",alignItems:"center",gap:8}}>
                 <span style={{fontSize:20}}>⚡</span>
                 <div style={{flex:1,cursor:"pointer"}} onClick={()=>setPendingQ({q:{...q,catId:q.stat},isBoss:false})}>
                   <div style={{fontWeight:700,fontSize:12,color:"#e2d5f0",fontFamily:"Rajdhani,sans-serif"}}>{q.title}</div>
@@ -1587,14 +1697,14 @@ export default function App() {
             ))}
           </div>}
 
-          {sub==="rest"&&<div style={{background:"#0e0b1a",border:"1px solid #1a0a2e",borderRadius:14,padding:20,textAlign:"center"}}>
+          {sub==="rest"&&<div style={{background:"rgba(15,8,35,.55)",border:"1px solid rgba(168,85,247,.12)",borderRadius:14,padding:20,textAlign:"center"}}>
             <div style={{fontSize:52,marginBottom:8}}>😴</div>
             <div style={{fontWeight:800,fontSize:15,color:"#e2d5f0",fontFamily:"Cinzel,serif",marginBottom:12}}>День Отдыха</div>
             <div style={{fontSize:12,color:"#7c6a9a",marginBottom:16,fontFamily:"Rajdhani,sans-serif",lineHeight:1.9}}>
               <span style={{color:"#4ade80"}}>1-й за неделю</span>: +30G, комбо цел, +10 HP<br/>
               <span style={{color:"#e05555"}}>2-й+</span>: -20G, -1 комбо, +10 HP<br/>
               <span style={{color:"#60a5fa",fontSize:11}}>◆ Все дейли → +5 HP | Ничего не делал → -10 HP</span><br/>
-              <span style={{color:"#2a1f4a",fontSize:11}}>Использовано: {gs.restWeek}/2</span>
+              <span style={{color:"rgba(168,85,247,.35)",fontSize:11}}>Использовано: {gs.restWeek}/2</span>
             </div>
             {gs.daily.REST?<div style={{color:"#60a5fa",fontWeight:700,fontFamily:"Cinzel,serif"}}>✓ Сегодня день отдыха</div>
               :<button onClick={takeRest} style={{...S.bWin,width:"100%",padding:"13px",fontSize:14,fontFamily:"Cinzel,serif",letterSpacing:1}}>😴 Взять день отдыха</button>}
@@ -1621,7 +1731,7 @@ export default function App() {
               </div>
               <div style={{display:"flex",gap:5,alignItems:"center"}}>
                 <div style={{background:`${sc}12`,border:`1px solid ${sc}35`,borderRadius:7,padding:"3px 8px",fontSize:11,fontWeight:700,color:sc,fontFamily:"Cinzel,serif"}}>{st}</div>
-                {(sp.completed||sp.failed)&&<button onClick={()=>deleteSprint(sp.id)} style={{background:"none",border:"none",cursor:"pointer",color:"#2a1f4a",fontSize:13}}>🗑</button>}
+                {(sp.completed||sp.failed)&&<button onClick={()=>deleteSprint(sp.id)} style={{background:"none",border:"none",cursor:"pointer",color:"rgba(168,85,247,.35)",fontSize:13}}>🗑</button>}
               </div>
             </div>
             <div style={{marginBottom:10}}>
@@ -1629,19 +1739,19 @@ export default function App() {
                 <span style={{fontSize:10,color:"#5a3fa0",fontFamily:"Cinzel,serif",letterSpacing:1}}>ПРОГРЕСС</span>
                 <span style={{fontSize:11,fontWeight:700,color:sc,fontFamily:"Rajdhani,sans-serif"}}>{elapsed}/{sp.duration} дней</span>
               </div>
-              <div style={{height:8,background:"#07060d",borderRadius:4,overflow:"hidden",border:"1px solid #1a0a2e"}}>
+              <div style={{height:8,background:"rgba(7,6,13,.8)",borderRadius:4,overflow:"hidden",border:"1px solid rgba(168,85,247,.12)"}}>
                 <div style={{height:"100%",width:`${pct}%`,background:sp.completed?"#4ade80":sp.failed?"#e05555":"linear-gradient(90deg,#5a3fa0,#7c3aed)",borderRadius:4,boxShadow:`0 0 8px ${sc}30`}}/>
               </div>
             </div>
             <div style={{display:"flex",gap:2,marginBottom:12,flexWrap:"wrap"}}>
               {Array.from({length:sp.duration},(_,i)=>{const d=new Date(sp.startDate);d.setDate(d.getDate()+i);const isToday=d.toDateString()===today(),isPast=d<new Date()&&!isToday;return<div key={i} style={{width:10,height:10,borderRadius:2,background:isToday?"#7c3aed":isPast?sp.completed?"#1a5a1a":"#2a1f4a":"#07060d",border:isToday?"1px solid #7c3aed":"none"}}/>;}) }
             </div>
-            <div style={{background:"#07060d",borderRadius:9,padding:"8px 12px",display:"flex",gap:8,justifyContent:"space-between",marginBottom:!sp.completed&&!sp.failed?10:0,border:"1px solid #1a0a2e"}}>
-              <div style={{textAlign:"center"}}><div style={{fontSize:9,color:"#2a1f4a",fontFamily:"Cinzel,serif"}}>ШТРАФ</div><div style={{fontSize:11,fontWeight:700,color:"#e05555",fontFamily:"Rajdhani,sans-serif"}}>-{sp.penaltyHp}HP</div></div>
-              <div style={{width:1,background:"#1a0a2e"}}/>
-              <div style={{textAlign:"center"}}><div style={{fontSize:9,color:"#2a1f4a",fontFamily:"Cinzel,serif"}}>СРОК</div><div style={{fontSize:11,fontWeight:700,color:"#7c6a9a",fontFamily:"Rajdhani,sans-serif"}}>{sp.duration}д</div></div>
-              <div style={{width:1,background:"#1a0a2e"}}/>
-              <div style={{textAlign:"center"}}><div style={{fontSize:9,color:"#2a1f4a",fontFamily:"Cinzel,serif"}}>БОНУС</div><div style={{fontSize:11,fontWeight:700,color:"#d4a017",fontFamily:"Rajdhani,sans-serif"}}>+300XP +50G</div></div>
+            <div style={{background:"rgba(7,6,13,.8)",borderRadius:9,padding:"8px 12px",display:"flex",gap:8,justifyContent:"space-between",marginBottom:!sp.completed&&!sp.failed?10:0,border:"1px solid rgba(168,85,247,.12)"}}>
+              <div style={{textAlign:"center"}}><div style={{fontSize:9,color:"rgba(168,85,247,.35)",fontFamily:"Cinzel,serif"}}>ШТРАФ</div><div style={{fontSize:11,fontWeight:700,color:"#e05555",fontFamily:"Rajdhani,sans-serif"}}>-{sp.penaltyHp}HP</div></div>
+              <div style={{width:1,background:"rgba(168,85,247,.1)"}}/>
+              <div style={{textAlign:"center"}}><div style={{fontSize:9,color:"rgba(168,85,247,.35)",fontFamily:"Cinzel,serif"}}>СРОК</div><div style={{fontSize:11,fontWeight:700,color:"#7c6a9a",fontFamily:"Rajdhani,sans-serif"}}>{sp.duration}д</div></div>
+              <div style={{width:1,background:"rgba(168,85,247,.1)"}}/>
+              <div style={{textAlign:"center"}}><div style={{fontSize:9,color:"rgba(168,85,247,.35)",fontFamily:"Cinzel,serif"}}>БОНУС</div><div style={{fontSize:11,fontWeight:700,color:"#d4a017",fontFamily:"Rajdhani,sans-serif"}}>+300XP +50G</div></div>
             </div>
             {!sp.completed&&!sp.failed&&<div style={{display:"flex",gap:8}}>
               <button onClick={()=>completeSprint(sp.id)} style={{...S.bWin,flex:1,padding:"9px",fontSize:12,fontFamily:"Cinzel,serif"}}>✓ Выполнил</button>
@@ -1650,7 +1760,7 @@ export default function App() {
           </div>;
         })}
         {!showSprintForm?<button onClick={()=>setShowSprintForm(true)} style={{...S.bWin,width:"100%",padding:"13px",fontSize:14,fontFamily:"Cinzel,serif",letterSpacing:1}}>🎯 Создать спринт</button>
-        :<div style={{background:"#0e0b1a",border:"1px solid #2a1f4a",borderRadius:14,padding:16}}>
+        :<div style={{background:"rgba(15,8,35,.55)",border:"1px solid rgba(168,85,247,.2)",borderRadius:14,padding:16}}>
           <div style={{fontWeight:700,color:"#d4a017",fontSize:13,marginBottom:12,fontFamily:"Cinzel,serif",letterSpacing:1}}>🎯 НОВЫЙ СПРИНТ</div>
           <input value={sprintBuf.name} onChange={e=>setSprintBuf(b=>({...b,name:e.target.value}))} placeholder="Чего хочешь достичь? Например: Выучить основы Python..." style={{...S.inp,marginBottom:9}}/>
           <div style={{fontSize:11,color:"#5a3fa0",marginBottom:5,fontFamily:"Cinzel,serif"}}>ТВОЯ РЕАЛЬНАЯ НАГРАДА</div>
@@ -1658,7 +1768,7 @@ export default function App() {
           <div style={{fontSize:11,color:"#5a3fa0",marginBottom:6,fontFamily:"Cinzel,serif"}}>СРОК</div>
           <div style={{display:"flex",gap:5,marginBottom:10,flexWrap:"wrap"}}>
             {SPRINT_DURATIONS.map(d=>(
-              <button key={d.days} onClick={()=>setSprintBuf(b=>({...b,duration:d.days}))} style={{background:sprintBuf.duration===d.days?"#1a0a2e":"#07060d",border:`1px solid ${sprintBuf.duration===d.days?"#7c3aed":"#1a0a2e"}`,borderRadius:8,padding:"6px 10px",cursor:"pointer",color:sprintBuf.duration===d.days?"#c4b5fd":"#5a3fa0",fontSize:11,fontWeight:sprintBuf.duration===d.days?700:400,fontFamily:"Rajdhani,sans-serif"}}>
+              <button key={d.days} onClick={()=>setSprintBuf(b=>({...b,duration:d.days}))} style={{background:sprintBuf.duration===d.days?"rgba(168,85,247,.1)":"#07060d",border:`1px solid ${sprintBuf.duration===d.days?"#7c3aed":"rgba(168,85,247,.1)"}`,borderRadius:8,padding:"6px 10px",cursor:"pointer",color:sprintBuf.duration===d.days?"#c4b5fd":"#5a3fa0",fontSize:11,fontWeight:sprintBuf.duration===d.days?700:400,fontFamily:"Rajdhani,sans-serif"}}>
                 {d.label}
               </button>
             ))}
@@ -1666,7 +1776,7 @@ export default function App() {
           <div style={{fontSize:11,color:"#5a3fa0",marginBottom:6,fontFamily:"Cinzel,serif"}}>ШТРАФ ЗА ПРОВАЛ</div>
           <div style={{display:"flex",gap:6,marginBottom:14}}>
             {SPRINT_PENALTIES.map(p=>(
-              <button key={p.hp} onClick={()=>setSprintBuf(b=>({...b,penaltyHp:p.hp}))} style={{flex:1,background:sprintBuf.penaltyHp===p.hp?`${p.color}12`:"#07060d",border:`1px solid ${sprintBuf.penaltyHp===p.hp?p.color:"#1a0a2e"}`,borderRadius:9,padding:"8px 4px",cursor:"pointer",color:p.color,fontSize:11,fontWeight:sprintBuf.penaltyHp===p.hp?700:400,textAlign:"center",lineHeight:1.4,fontFamily:"Rajdhani,sans-serif"}}>
+              <button key={p.hp} onClick={()=>setSprintBuf(b=>({...b,penaltyHp:p.hp}))} style={{flex:1,background:sprintBuf.penaltyHp===p.hp?`${p.color}12`:"#07060d",border:`1px solid ${sprintBuf.penaltyHp===p.hp?p.color:"rgba(168,85,247,.25)"}`,borderRadius:9,padding:"8px 4px",cursor:"pointer",color:p.color,fontSize:11,fontWeight:sprintBuf.penaltyHp===p.hp?700:400,textAlign:"center",lineHeight:1.4,fontFamily:"Rajdhani,sans-serif"}}>
                 {p.label}<br/><span style={{fontSize:10,color:"#5a3fa0"}}>-{p.hp}HP</span>
               </button>
             ))}
@@ -1680,250 +1790,307 @@ export default function App() {
 
       {/* ══ HABITS ══ */}
       {tab==="habits"&&<div style={S.body}>
-        <div style={{fontSize:12,color:"#5a3fa0",marginBottom:12,fontFamily:"Rajdhani,sans-serif"}}>Привычки которые хочешь <span style={{color:"#e05555"}}>искоренить</span>. Срыв: -10 HP.</div>
+        <div style={{fontSize:11,color:"rgba(168,85,247,.45)",marginBottom:14,fontFamily:"Rajdhani,sans-serif",lineHeight:1.7,background:"rgba(168,85,247,.05)",border:"1px solid rgba(168,85,247,.1)",borderRadius:12,padding:"10px 14px"}}>
+          🛡 Привычки которые хочешь <span style={{color:"#e05555",fontWeight:700}}>искоренить</span>. Каждый день без срыва — победа. Срыв: -10 HP.
+        </div>
         {(gs.habits||[]).map(h=>{
           const checkedToday=h.lastCheck===today();
           const avMs=HABIT_MS.filter(m=>h.streak>=m.days&&!(h.claimedMs||[]).includes(m.days));
           const isEd=editingH===h.id;
-          return <div key={h.id} style={{background:"#0e0b1a",border:"1px solid #1a0a2e",borderRadius:14,padding:14,marginBottom:12}}>
+          const streakPct=Math.min(1,h.streak/90);
+          return <div key={h.id} style={{borderRadius:20,overflow:"hidden",marginBottom:14,boxShadow:"0 4px 24px rgba(0,0,0,.4)"}}>
+            {/* Top streak bar */}
+            <div style={{height:3,background:`linear-gradient(90deg,rgba(168,85,247,.2),rgba(168,85,247,.2))`,position:"relative"}}>
+              <div style={{position:"absolute",left:0,top:0,bottom:0,width:`${streakPct*100}%`,background:h.streak>=30?"linear-gradient(90deg,#d4a017,#f59e0b)":h.streak>=7?"linear-gradient(90deg,#a855f7,#c084fc)":"linear-gradient(90deg,#5a3fa0,#7c3aed)",transition:"width .8s ease",boxShadow:h.streak>0?"0 0 8px rgba(168,85,247,.6)":"none"}}/>
+            </div>
+            <div style={{background:"rgba(15,8,35,.6)",border:"1px solid rgba(168,85,247,.15)",borderTop:"none",backdropFilter:"blur(14px)",padding:"14px"}}>
             {isEd?<div>
-              <input value={editHBuf.name||""} onChange={e=>setEditHBuf(b=>({...b,name:e.target.value}))} style={{...S.inp,marginBottom:7}}/>
-              <div style={{display:"flex",gap:5,marginBottom:10,flexWrap:"wrap"}}>
+              <input value={editHBuf.name||""} onChange={e=>setEditHBuf(b=>({...b,name:e.target.value}))} style={{...S.inp,marginBottom:9}}/>
+              <div style={{display:"flex",gap:6,marginBottom:12,flexWrap:"wrap"}}>
                 {["🛡","🔒","🚫","💪","🧘","🥗","📵","🚭","💊","🎯"].map(ico=>(
-                  <button key={ico} onClick={()=>setEditHBuf(b=>({...b,icon:ico}))} style={{fontSize:18,background:editHBuf.icon===ico?"#1a0a2e":"transparent",border:`1px solid ${editHBuf.icon===ico?"#7c3aed":"#1a0a2e"}`,borderRadius:8,padding:"4px 7px",cursor:"pointer"}}>{ico}</button>
+                  <button key={ico} onClick={()=>setEditHBuf(b=>({...b,icon:ico}))} style={{fontSize:20,background:editHBuf.icon===ico?"rgba(168,85,247,.15)":"transparent",border:`1px solid ${editHBuf.icon===ico?"rgba(168,85,247,.5)":"rgba(168,85,247,.1)"}`,borderRadius:10,padding:"6px 8px",cursor:"pointer",transition:"all .2s"}}>{ico}</button>
                 ))}
               </div>
-              <div style={{display:"flex",gap:7}}>
-                <button onClick={saveHabit} style={{...S.bWin,flex:1,padding:"8px"}}>✓</button>
-                <button onClick={()=>{deleteHabit(h.id);}} style={{...S.bFail,padding:"8px 11px"}}>🗑</button>
-                <button onClick={()=>setEditingH(null)} style={{...S.bGray,padding:"8px 11px"}}>✗</button>
+              <div style={{display:"flex",gap:8}}>
+                <button onClick={saveHabit} style={{...S.bWin,flex:1,padding:"9px"}}>✓ Сохранить</button>
+                <button onClick={()=>{deleteHabit(h.id);}} style={{...S.bFail,padding:"9px 13px"}}>🗑</button>
+                <button onClick={()=>setEditingH(null)} style={{...S.bGray,padding:"9px 13px"}}>✗</button>
               </div>
             </div>:<>
-              <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:11}}>
-                <span style={{fontSize:32,filter:`drop-shadow(0 0 8px ${h.streak>0?"#4ade8030":"#1a0a2e"})`}}>{h.icon}</span>
-                <div style={{flex:1}}>
-                  <div style={{fontWeight:800,fontSize:13,color:"#e2d5f0",fontFamily:"Cinzel,serif"}}>{h.name}</div>
-                  <div style={{fontSize:11,color:"#2a1f4a",marginTop:1,fontFamily:"Rajdhani,sans-serif"}}>Рекорд: {h.longest} {declDay(h.longest)}</div>
+              {/* Header row */}
+              <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:14}}>
+                <div style={{width:52,height:52,borderRadius:16,background:`rgba(168,85,247,.08)`,border:"1px solid rgba(168,85,247,.2)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:26,flexShrink:0,boxShadow:"0 0 12px rgba(168,85,247,.1)"}}>
+                  {h.icon}
                 </div>
-                <div style={{textAlign:"center",marginRight:4}}>
-                  <div style={{fontSize:30,fontWeight:900,color:h.streak>0?"#4ade80":"#2a1f4a",fontFamily:"Rajdhani,sans-serif",lineHeight:1,textShadow:h.streak>0?"0 0 15px #4ade8050":""}}>{h.streak}</div>
-                  <div style={{fontSize:9,color:"#2a1f4a",fontFamily:"Rajdhani,sans-serif"}}>дней</div>
+                <div style={{flex:1,minWidth:0}}>
+                  <div style={{fontWeight:800,fontSize:14,color:"#e2d5f0",fontFamily:"Cinzel,serif",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{h.name}</div>
+                  <div style={{fontSize:10,color:"rgba(168,85,247,.4)",marginTop:2,fontFamily:"Rajdhani,sans-serif"}}>Рекорд: <span style={{color:"rgba(168,85,247,.7)",fontWeight:700}}>{h.longest} {declDay(h.longest)}</span></div>
                 </div>
-                <button onClick={()=>{setEditingH(h.id);setEditHBuf({name:h.name,icon:h.icon});}} style={{background:"none",border:"none",cursor:"pointer",color:"#2a1f4a",fontSize:13,padding:"2px"}}>✏️</button>
+                {/* Big streak counter */}
+                <div style={{textAlign:"center",background:h.streak>0?"rgba(168,85,247,.08)":"rgba(6,4,15,.5)",border:`1px solid ${h.streak>0?"rgba(168,85,247,.25)":"rgba(168,85,247,.08)"}`,borderRadius:14,padding:"8px 14px",minWidth:60}}>
+                  <div style={{fontSize:28,fontWeight:900,color:h.streak>=30?"#d4a017":h.streak>=7?"#a855f7":h.streak>0?"#c084fc":"rgba(168,85,247,.2)",fontFamily:"Rajdhani,sans-serif",lineHeight:1,textShadow:h.streak>0?`0 0 15px ${h.streak>=30?"rgba(212,160,23,.5)":"rgba(168,85,247,.5)"}`:""}}>{h.streak}</div>
+                  <div style={{fontSize:8,color:"rgba(168,85,247,.4)",fontFamily:"Cinzel,serif",letterSpacing:1,marginTop:1}}>ДНЕЙ</div>
+                </div>
+                <button onClick={()=>{setEditingH(h.id);setEditHBuf({name:h.name,icon:h.icon});}} style={{background:"none",border:"none",cursor:"pointer",color:"rgba(168,85,247,.3)",fontSize:14,padding:"4px",flexShrink:0}}>✏️</button>
               </div>
-              <div style={{display:"flex",gap:3,marginBottom:10}}>
-                {HABIT_MS.map(m=>{const done=(h.claimedMs||[]).includes(m.days),reached=h.streak>=m.days;return(
-                  <div key={m.days} style={{flex:1,textAlign:"center"}}>
-                    <div style={{fontSize:13,marginBottom:1,opacity:reached?1:0.2,filter:reached?`drop-shadow(0 0 4px ${done?"#4ade80":"#d4a017"})`:""}}>{m.icon}</div>
-                    <div style={{fontSize:9,color:done?"#4ade80":reached?"#d4a017":"#1a0a2e",fontWeight:reached?700:400,fontFamily:"Rajdhani,sans-serif"}}>{m.days}д</div>
-                  </div>);})}
+
+              {/* Milestone track */}
+              <div style={{display:"flex",gap:4,marginBottom:12,alignItems:"center"}}>
+                {HABIT_MS.map(m=>{
+                  const done=(h.claimedMs||[]).includes(m.days),reached=h.streak>=m.days;
+                  return <div key={m.days} style={{flex:1,textAlign:"center",background:done?"rgba(212,160,23,.08)":reached?"rgba(168,85,247,.08)":"transparent",border:`1px solid ${done?"rgba(212,160,23,.3)":reached?"rgba(168,85,247,.25)":"rgba(168,85,247,.06)"}`,borderRadius:8,padding:"5px 2px",transition:"all .3s"}}>
+                    <div style={{fontSize:14,opacity:reached?1:.15,filter:reached?`drop-shadow(0 0 5px ${done?"rgba(212,160,23,.7)":"rgba(168,85,247,.7)"})`:"",transition:"all .3s"}}>{m.icon}</div>
+                    <div style={{fontSize:8,color:done?"#d4a017":reached?"#a855f7":"rgba(168,85,247,.2)",fontWeight:reached?700:400,fontFamily:"Rajdhani,sans-serif",marginTop:1}}>{m.days}д</div>
+                  </div>;
+                })}
               </div>
+
+              {/* Milestone claim buttons */}
               {avMs.map(m=>(
-                <button key={m.days} onClick={()=>claimHabitMs(h.id,m.days)} style={{...S.bWin,width:"100%",padding:"7px",marginBottom:6,fontSize:11,fontFamily:"Cinzel,serif"}}>
-                  {m.icon} Веха {m.days} дней! +{m.gold}G {m.xp>0?`+${m.xp}XP`:""} {m.hp>0?`+${m.hp}HP`:""}
+                <button key={m.days} onClick={()=>claimHabitMs(h.id,m.days)}
+                  style={{width:"100%",background:"linear-gradient(135deg,rgba(212,160,23,.1),rgba(212,160,23,.05))",border:"1px solid rgba(212,160,23,.3)",borderRadius:12,padding:"10px 14px",marginBottom:8,cursor:"pointer",display:"flex",justifyContent:"space-between",alignItems:"center",boxShadow:"0 0 16px rgba(212,160,23,.08)"}}>
+                  <span style={{color:"#d4a017",fontWeight:700,fontSize:12,fontFamily:"Cinzel,serif"}}>{m.icon} Веха {m.days} дней!</span>
+                  <span style={{color:"#d4a017",fontSize:11,fontFamily:"Rajdhani,sans-serif"}}>+{m.gold}G {m.xp>0?`+${m.xp}XP`:""} {m.hp>0?`+${m.hp}HP`:""}</span>
                 </button>
               ))}
-              <div style={{display:"flex",gap:7}}>
-                <button onClick={()=>habitHold(h.id)} disabled={checkedToday} style={{...S.bWin,flex:2,padding:"10px",fontSize:12,opacity:checkedToday?.5:1,cursor:checkedToday?"default":"pointer",fontFamily:"Cinzel,serif"}}>
-                  {checkedToday?"✓ Держусь сегодня":"🛡 Держусь сегодня"}
+
+              {/* Action buttons */}
+              <div style={{display:"flex",gap:8}}>
+                <button onClick={()=>habitHold(h.id)} disabled={checkedToday}
+                  style={{flex:2,background:checkedToday?"rgba(74,222,128,.05)":"rgba(74,222,128,.08)",border:`1px solid ${checkedToday?"rgba(74,222,128,.2)":"rgba(74,222,128,.35)"}`,borderRadius:12,color:checkedToday?"rgba(74,222,128,.4)":"#4ade80",padding:"11px",cursor:checkedToday?"default":"pointer",fontWeight:700,fontSize:13,fontFamily:"Cinzel,serif",boxShadow:checkedToday?"none":"0 0 14px rgba(74,222,128,.1)",transition:"all .2s"}}>
+                  {checkedToday?"✓ Держусь":"🛡 Держусь сегодня"}
                 </button>
-                <button onClick={()=>{habitFail(h.id);}} style={{...S.bFail,padding:"10px 12px",fontSize:12}}>💔 Срыв</button>
+                <button onClick={()=>habitFail(h.id)} style={{...S.bFail,padding:"11px 14px",fontSize:12,borderRadius:12}}>💔 Срыв</button>
               </div>
             </>}
+            </div>
           </div>;
         })}
-        <button onClick={()=>setShowSettings(true)} style={{...S.bGray,width:"100%",padding:"10px",fontSize:12,borderRadius:11,fontFamily:"Cinzel,serif"}}>+ Добавить привычку</button>
+        <button onClick={()=>setShowSettings(true)} style={{...S.bGray,width:"100%",padding:"12px",fontSize:12,borderRadius:14,fontFamily:"Cinzel,serif",letterSpacing:.5}}>+ Добавить привычку</button>
       </div>}
 
-      {/* ══ SHOP (renamed) ══ */}
+      {/* ══ SHOP ══ */}
       {tab==="shop"&&<div style={S.body}>
-        <div style={{background:"#0e0b1a",border:"1px solid #5a3a0a",borderRadius:12,padding:"12px 16px",marginBottom:12,display:"flex",justifyContent:"space-between",alignItems:"center"}}>
-          <div>
-            <div style={{fontSize:10,color:"#5a3a0a",letterSpacing:2,fontFamily:"Cinzel,serif"}}>МАГАЗИН РАЗРЕШЕНИЙ</div>
-            <div style={{fontSize:11,color:"#5a3fa0",fontFamily:"Rajdhani,sans-serif"}}>Заработай право на отдых</div>
+        {/* Gold header banner */}
+        <div style={{borderRadius:20,overflow:"hidden",marginBottom:16,boxShadow:"0 0 30px rgba(212,160,23,.08)"}}>
+          <div style={{height:3,background:"linear-gradient(90deg,#7c3aed,#d4a017,#f59e0b)"}}/>
+          <div style={{background:"linear-gradient(135deg,rgba(20,12,3,.9),rgba(30,18,5,.9))",backdropFilter:"blur(16px)",border:"1px solid rgba(212,160,23,.2)",borderTop:"none",padding:"16px 18px",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+            <div>
+              <div style={{fontSize:9,color:"rgba(212,160,23,.5)",letterSpacing:3,fontFamily:"Cinzel,serif",marginBottom:4}}>МАГАЗИН РАЗРЕШЕНИЙ</div>
+              <div style={{fontSize:12,color:"rgba(212,160,23,.6)",fontFamily:"Rajdhani,sans-serif",lineHeight:1.5}}>Gold = право на отдых без чувства вины</div>
+            </div>
+            <div style={{textAlign:"center",background:"rgba(212,160,23,.08)",border:"1px solid rgba(212,160,23,.2)",borderRadius:16,padding:"10px 16px"}}>
+              <div style={{fontSize:28,fontWeight:900,color:"#d4a017",fontFamily:"Rajdhani,sans-serif",lineHeight:1,textShadow:"0 0 20px rgba(212,160,23,.5)"}}>{gs.gold}</div>
+              <div style={{fontSize:8,color:"rgba(212,160,23,.4)",fontFamily:"Cinzel,serif",letterSpacing:2,marginTop:2}}>GOLD</div>
+            </div>
           </div>
-          <span style={{color:"#d4a017",fontSize:26,fontWeight:900,fontFamily:"Rajdhani,sans-serif",textShadow:"0 0 15px #d4a01740"}}>💰 {gs.gold}</span>
         </div>
-        {(gs.shop||[]).map(item=>(
-          <div key={item.id} style={{background:"#0e0b1a",border:"1px solid #1a0a2e",borderRadius:12,padding:"10px 12px",marginBottom:7}}>
-            {editingShop===item.id?<div>
-              <div style={{display:"flex",gap:7,marginBottom:7}}>
-                <input value={editShopBuf.name||""} onChange={e=>setEditShopBuf(b=>({...b,name:e.target.value}))} placeholder="Название" style={{...S.inp,flex:1}}/>
-                <input value={editShopBuf.icon||""} onChange={e=>setEditShopBuf(b=>({...b,icon:e.target.value}))} placeholder="🎁" style={{...S.inp,width:50}}/>
-              </div>
-              <div style={{display:"flex",gap:8,marginBottom:8,alignItems:"center"}}>
-                <input type="number" value={editShopBuf.cost||50} onChange={e=>setEditShopBuf(b=>({...b,cost:e.target.value}))} style={{...S.inp,flex:1}}/>
-                <span style={{color:"#5a3fa0",fontSize:12,fontFamily:"Rajdhani,sans-serif"}}>Gold</span>
-              </div>
-              <div style={{display:"flex",gap:7}}>
-                <button onClick={saveShopItem} style={{...S.bWin,flex:1,padding:"7px"}}>✓</button>
-                <button onClick={()=>deleteShopItem(item.id)} style={{...S.bFail,padding:"7px 10px"}}>🗑</button>
-                <button onClick={()=>setEditingShop(null)} style={{...S.bGray,padding:"7px 10px"}}>✗</button>
-              </div>
-            </div>:<div style={{display:"flex",alignItems:"center",gap:10}}>
-              <span style={{fontSize:26}}>{item.icon}</span>
-              <div style={{flex:1}}>
-                <div style={{fontWeight:600,fontSize:13,color:"#e2d5f0",fontFamily:"Rajdhani,sans-serif"}}>{item.name}</div>
-                <div style={{fontSize:11,color:"#d4a017",marginTop:1,fontFamily:"Rajdhani,sans-serif"}}>💰 {item.cost}G</div>
-              </div>
-              <button onClick={()=>{setEditingShop(item.id);setEditShopBuf({name:item.name,cost:item.cost,icon:item.icon});}} style={{background:"none",border:"none",cursor:"pointer",color:"#2a1f4a",fontSize:13}}>✏️</button>
-              <button onClick={()=>buyItem(item)} disabled={gs.gold<item.cost} style={{...S.bWin,padding:"7px 13px",opacity:gs.gold<item.cost?.3:1,cursor:gs.gold<item.cost?"not-allowed":"pointer",fontSize:12,fontFamily:"Cinzel,serif"}}>Купить</button>
-            </div>}
-          </div>
-        ))}
-        <button onClick={()=>setSForm(f=>({...f,show:!f.show}))} style={{...S.bGray,width:"100%",padding:"10px",fontSize:12,borderRadius:10,marginTop:4,marginBottom:8,fontFamily:"Cinzel,serif"}}>
+        {/* Shop items grid */}
+        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginBottom:14}}>
+          {(gs.shop||[]).map(item=>(
+            <div key={item.id} style={{borderRadius:16,overflow:"hidden",boxShadow:"0 4px 16px rgba(0,0,0,.3)"}}>
+              {editingShop===item.id
+                ?<div style={{background:"rgba(15,8,35,.8)",border:"1px solid rgba(168,85,247,.25)",borderRadius:16,padding:12}}>
+                  <div style={{display:"flex",gap:6,marginBottom:6}}>
+                    <input value={editShopBuf.icon||""} onChange={e=>setEditShopBuf(b=>({...b,icon:e.target.value}))} placeholder="🎁" style={{...S.inp,width:44,textAlign:"center",padding:"6px"}}/>
+                    <input value={editShopBuf.name||""} onChange={e=>setEditShopBuf(b=>({...b,name:e.target.value}))} placeholder="Название" style={{...S.inp,flex:1,fontSize:11}}/>
+                  </div>
+                  <div style={{display:"flex",gap:6,marginBottom:8,alignItems:"center"}}>
+                    <input type="number" value={editShopBuf.cost||50} onChange={e=>setEditShopBuf(b=>({...b,cost:e.target.value}))} style={{...S.inp,flex:1,fontSize:11}}/>
+                    <span style={{color:"#d4a017",fontSize:11,fontFamily:"Rajdhani,sans-serif",flexShrink:0}}>G</span>
+                  </div>
+                  <div style={{display:"flex",gap:6}}>
+                    <button onClick={saveShopItem} style={{...S.bWin,flex:1,padding:"6px",fontSize:11}}>✓</button>
+                    <button onClick={()=>deleteShopItem(item.id)} style={{...S.bFail,padding:"6px 8px",fontSize:11}}>🗑</button>
+                    <button onClick={()=>setEditingShop(null)} style={{...S.bGray,padding:"6px 8px",fontSize:11}}>✗</button>
+                  </div>
+                </div>
+                :<div style={{background:"rgba(15,8,35,.55)",border:`1px solid ${gs.gold>=item.cost?"rgba(212,160,23,.18)":"rgba(168,85,247,.1)"}`,backdropFilter:"blur(12px)",padding:"14px 12px",display:"flex",flexDirection:"column",alignItems:"center",gap:8,minHeight:130,position:"relative"}}>
+                  <button onClick={()=>{setEditingShop(item.id);setEditShopBuf({name:item.name,cost:item.cost,icon:item.icon});}} style={{position:"absolute",top:8,right:8,background:"none",border:"none",cursor:"pointer",color:"rgba(168,85,247,.25)",fontSize:11,padding:0}}>✏️</button>
+                  <span style={{fontSize:32,filter:gs.gold>=item.cost?"drop-shadow(0 0 8px rgba(212,160,23,.3))":"none"}}>{item.icon}</span>
+                  <div style={{textAlign:"center"}}>
+                    <div style={{fontWeight:700,fontSize:12,color:"#e2d5f0",fontFamily:"Rajdhani,sans-serif",lineHeight:1.3}}>{item.name}</div>
+                    <div style={{fontSize:13,color:"#d4a017",fontWeight:800,marginTop:4,fontFamily:"Rajdhani,sans-serif",textShadow:"0 0 8px rgba(212,160,23,.4)"}}>💰 {item.cost}G</div>
+                  </div>
+                  <button onClick={()=>buyItem(item)} disabled={gs.gold<item.cost}
+                    style={{width:"100%",background:gs.gold>=item.cost?"rgba(212,160,23,.12)":"rgba(6,4,15,.5)",border:`1px solid ${gs.gold>=item.cost?"rgba(212,160,23,.35)":"rgba(168,85,247,.1)"}`,borderRadius:10,color:gs.gold>=item.cost?"#d4a017":"rgba(168,85,247,.25)",padding:"7px",cursor:gs.gold<item.cost?"not-allowed":"pointer",fontSize:11,fontWeight:700,fontFamily:"Cinzel,serif",transition:"all .2s"}}>
+                    {gs.gold>=item.cost?"Купить":"Мало Gold"}
+                  </button>
+                </div>
+              }
+            </div>
+          ))}
+        </div>
+        <button onClick={()=>setSForm(f=>({...f,show:!f.show}))} style={{...S.bGray,width:"100%",padding:"12px",fontSize:12,borderRadius:14,fontFamily:"Cinzel,serif",marginBottom:8,letterSpacing:.5}}>
           {sForm.show?"✗ Закрыть":"+ Добавить разрешение"}
         </button>
-        {sForm.show&&<div style={{background:"#0e0b1a",border:"1px solid #2a1f4a",borderRadius:12,padding:13}}>
-          <div style={{display:"flex",gap:7,marginBottom:7}}>
-            <input value={sForm.name} onChange={e=>setSForm(f=>({...f,name:e.target.value}))} placeholder="Название..." style={{...S.inp,flex:1}}/>
-            <input value={sForm.icon} onChange={e=>setSForm(f=>({...f,icon:e.target.value}))} placeholder="🎁" style={{...S.inp,width:50}}/>
+        {sForm.show&&<div style={{background:"rgba(15,8,35,.6)",border:"1px solid rgba(168,85,247,.2)",borderRadius:16,padding:16,backdropFilter:"blur(14px)"}}>
+          <div style={{display:"flex",gap:8,marginBottom:8}}>
+            <input value={sForm.icon} onChange={e=>setSForm(f=>({...f,icon:e.target.value}))} placeholder="🎁" style={{...S.inp,width:50,textAlign:"center",padding:"8px 6px"}}/>
+            <input value={sForm.name} onChange={e=>setSForm(f=>({...f,name:e.target.value}))} placeholder="Название разрешения..." style={{...S.inp,flex:1}}/>
           </div>
-          <div style={{display:"flex",gap:8,marginBottom:9,alignItems:"center"}}>
+          <div style={{display:"flex",gap:8,marginBottom:12,alignItems:"center"}}>
             <input type="number" value={sForm.cost} onChange={e=>setSForm(f=>({...f,cost:Math.max(1,parseInt(e.target.value)||50)}))} style={{...S.inp,flex:1}}/>
-            <span style={{color:"#5a3fa0",fontSize:12,fontFamily:"Rajdhani,sans-serif"}}>Gold</span>
+            <span style={{color:"#d4a017",fontSize:13,fontFamily:"Rajdhani,sans-serif",fontWeight:700}}>Gold</span>
           </div>
-          <button onClick={()=>{if(!sForm.name.trim()){pop("Введи название",false);return;}upd(prev=>({...prev,shop:[...prev.shop,{id:`sh-${Date.now()}`,name:sForm.name.trim(),cost:sForm.cost,icon:sForm.icon}]}));setSForm({show:false,name:"",cost:50,icon:"⭐"});pop("Добавлено!");}} style={{...S.bWin,width:"100%",padding:"9px",fontFamily:"Cinzel,serif"}}>Добавить</button>
+          <button onClick={()=>{if(!sForm.name.trim()){pop("Введи название",false);return;}upd(prev=>({...prev,shop:[...prev.shop,{id:`sh-${Date.now()}`,name:sForm.name.trim(),cost:sForm.cost,icon:sForm.icon}]}));setSForm({show:false,name:"",cost:50,icon:"⭐"});pop("Добавлено!");}} style={{...S.bWin,width:"100%",padding:"11px",fontFamily:"Cinzel,serif",fontSize:13}}>Добавить</button>
         </div>}
       </div>}
 
       {/* ══ STATS / CHRONICLES ══ */}
       {tab==="chronicles"&&<div style={S.body}>
-        {/* Hero Card */}
-        <div style={{background:"linear-gradient(135deg,#0a0714,#1a0a2e,#0a0714)",border:`1px solid ${cls.color}30`,borderRadius:18,padding:20,marginBottom:12,position:"relative",overflow:"hidden",boxShadow:`0 0 20px ${cls.color}08`}}>
-          <div style={{position:"absolute",top:8,left:8,width:14,height:14,borderTop:"2px solid #d4a017",borderLeft:"2px solid #d4a017"}}/>
-          <div style={{position:"absolute",top:8,right:8,width:14,height:14,borderTop:"2px solid #d4a017",borderRight:"2px solid #d4a017"}}/>
-          <div style={{position:"absolute",bottom:8,left:8,width:14,height:14,borderBottom:"2px solid #d4a017",borderLeft:"2px solid #d4a017"}}/>
-          <div style={{position:"absolute",bottom:8,right:8,width:14,height:14,borderBottom:"2px solid #d4a017",borderRight:"2px solid #d4a017"}}/>
 
-          <div style={{textAlign:"center",marginBottom:12}}>
-            <div style={{fontSize:10,color:"#5a3fa0",letterSpacing:3,marginBottom:4,fontFamily:"Cinzel,serif"}}>ГЕРОЙ</div>
-            <div style={{fontSize:22,fontWeight:900,color:"#d4a017",fontFamily:"Cinzel,serif",textShadow:"0 0 20px #d4a01750"}}>{gs.name}</div>
-            <div style={{fontSize:11,color:"#7c6a9a",fontFamily:"Cinzel,serif",marginTop:2}}>{getLvlName(lvi.level)}</div>
-            <div style={{fontSize:12,color:cls.color,marginTop:2,fontFamily:"Cinzel,serif"}}>{cls.name}</div>
-          </div>
+        {/* ── HERO CARD with Radar ── */}
+        <div style={{borderRadius:22,overflow:"hidden",marginBottom:14,position:"relative",boxShadow:`0 0 40px ${cls.color}12,0 8px 32px rgba(0,0,0,.5)`}}>
+          {/* Gradient top bar */}
+          <div style={{height:4,background:`linear-gradient(90deg,#7c3aed,${cls.color},#a855f7)`,boxShadow:`0 0 12px ${cls.color}80`}}/>
+          <div style={{background:"linear-gradient(160deg,rgba(12,5,28,.97) 0%,rgba(18,6,40,.97) 60%,rgba(10,4,22,.97) 100%)",backdropFilter:"blur(20px)",border:"1px solid rgba(168,85,247,.15)",borderTop:"none",padding:"18px 18px 16px",position:"relative"}}>
+            {/* Corner accents */}
+            <div style={{position:"absolute",top:10,left:10,width:16,height:16,borderTop:`2px solid ${cls.color}60`,borderLeft:`2px solid ${cls.color}60`}}/>
+            <div style={{position:"absolute",top:10,right:10,width:16,height:16,borderTop:`2px solid ${cls.color}60`,borderRight:`2px solid ${cls.color}60`}}/>
+            <div style={{position:"absolute",bottom:10,left:10,width:16,height:16,borderBottom:`2px solid ${cls.color}60`,borderLeft:`2px solid ${cls.color}60`}}/>
+            <div style={{position:"absolute",bottom:10,right:10,width:16,height:16,borderBottom:`2px solid ${cls.color}60`,borderRight:`2px solid ${cls.color}60`}}/>
 
-          {/* Radar */}
-          <div style={{display:"flex",justifyContent:"center",marginBottom:14}}>
-            <RadarChart stats={gs.stats||{telo:1,razum:1,vliyanie:1,volya:1,delo:1}} size={170}/>
-          </div>
-
-          {/* Class description */}
-          <div style={{background:"#07060d",border:`1px solid ${cls.color}18`,borderRadius:10,padding:"10px 13px",marginBottom:14}}>
-            <div style={{fontSize:10,color:cls.color,fontWeight:700,marginBottom:6,letterSpacing:1,fontFamily:"Cinzel,serif"}}>ТВОЙ КЛАСС</div>
-            <div style={{fontSize:12,color:"#7c6a9a",lineHeight:1.7,fontFamily:"Rajdhani,sans-serif"}}>{cls.motivation}</div>
-            <div style={{fontSize:11,color:cls.color,marginTop:6,fontFamily:"Rajdhani,sans-serif"}}>▸ {cls.bonus}</div>
-          </div>
-
-          {/* XP progress */}
-          <div style={{marginBottom:4}}>
-            <div style={{display:"flex",justifyContent:"space-between",fontSize:10,marginBottom:3}}>
-              <span style={{color:"#5a3fa0",fontFamily:"Cinzel,serif",letterSpacing:1}}>ДО УР.{lvi.level+1}</span>
-              <span style={{color:"#7c6a9a",fontFamily:"Rajdhani,sans-serif"}}>{lvi.xpIn.toLocaleString()} / {lvi.xpTo.toLocaleString()}</span>
+            {/* Name + class row */}
+            <div style={{textAlign:"center",marginBottom:16}}>
+              <div style={{fontSize:9,color:"rgba(168,85,247,.5)",letterSpacing:4,marginBottom:6,fontFamily:"Cinzel,serif"}}>⚔️ ГЕРОЙ ⚔️</div>
+              <div style={{fontSize:26,fontWeight:900,color:"#d4a017",fontFamily:"Cinzel,serif",textShadow:"0 0 30px rgba(212,160,23,.4)",letterSpacing:1}}>{gs.name}</div>
+              <div style={{fontSize:11,color:"rgba(168,85,247,.6)",fontFamily:"Cinzel,serif",marginTop:4}}>{getLvlName(lvi.level)}</div>
+              <div style={{display:"inline-block",marginTop:6,background:`${cls.color}15`,border:`1px solid ${cls.color}35`,borderRadius:20,padding:"4px 14px"}}>
+                <span style={{fontSize:12,fontWeight:700,color:cls.color,fontFamily:"Cinzel,serif",textShadow:`0 0 12px ${cls.color}60`}}>{cls.name}</span>
+              </div>
             </div>
-            <div style={{height:6,background:"#07060d",borderRadius:3,overflow:"hidden",border:"1px solid #1a0a2e"}}>
-              <div style={{height:"100%",width:`${xpP}%`,background:"linear-gradient(90deg,#5a3fa0,#7c3aed)",borderRadius:3,boxShadow:"0 0 8px #7c3aed60"}}/>
+
+            {/* Radar chart — сохраняем как есть */}
+            <div style={{display:"flex",justifyContent:"center",marginBottom:14,position:"relative"}}>
+              <div style={{position:"absolute",inset:0,background:`radial-gradient(circle,${cls.color}08 0%,transparent 70%)`,filter:"blur(20px)"}}/>
+              <RadarChart stats={gs.stats||{telo:1,razum:1,vliyanie:1,volya:1,delo:1}} size={180}/>
+            </div>
+
+            {/* Class motivation */}
+            <div style={{background:`linear-gradient(135deg,rgba(6,4,15,.8),${cls.color}08)`,border:`1px solid ${cls.color}20`,borderRadius:12,padding:"11px 14px",marginBottom:14}}>
+              <div style={{fontSize:9,color:cls.color,fontWeight:700,marginBottom:5,letterSpacing:2,fontFamily:"Cinzel,serif"}}>КЛАСС: {cls.bonus}</div>
+              <div style={{fontSize:11,color:"rgba(200,185,230,.7)",lineHeight:1.8,fontFamily:"Rajdhani,sans-serif",fontStyle:"italic"}}>"{cls.motivation}"</div>
+            </div>
+
+            {/* XP bar */}
+            <div>
+              <div style={{display:"flex",justifyContent:"space-between",fontSize:9,marginBottom:5}}>
+                <span style={{color:"rgba(168,85,247,.5)",fontFamily:"Cinzel,serif",letterSpacing:2}}>ДО УР.{lvi.level+1}</span>
+                <span style={{color:"rgba(168,85,247,.4)",fontFamily:"Rajdhani,sans-serif"}}>{lvi.xpIn.toLocaleString()} / {lvi.xpTo.toLocaleString()} XP</span>
+              </div>
+              <div style={{height:8,background:"rgba(168,85,247,.06)",borderRadius:8,overflow:"hidden",border:"1px solid rgba(168,85,247,.1)"}}>
+                <div style={{height:"100%",width:`${xpP}%`,background:"linear-gradient(90deg,#5a3fa0,#a855f7)",borderRadius:8,transition:"width .8s ease",boxShadow:"0 0 10px rgba(168,85,247,.6)",position:"relative"}}>
+                  <div style={{position:"absolute",right:0,top:0,bottom:0,width:4,background:"rgba(255,255,255,.25)",filter:"blur(1px)"}}/>
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Diagnostics */}
-        <div style={{background:"#0e0b1a",border:"1px solid #1a0a2e",borderRadius:14,padding:16,marginBottom:12}}>
+        {/* ── STATS RINGS — крупные ── */}
+        <div style={{background:"rgba(15,8,35,.55)",border:"1px solid rgba(168,85,247,.12)",borderRadius:18,padding:"16px 12px",marginBottom:12,backdropFilter:"blur(14px)",boxShadow:"inset 0 1px 0 rgba(255,255,255,.04)"}}>
+          <div style={S.cT}>⚡ СТАТЫ</div>
+          <div style={{display:"flex",justifyContent:"space-around",marginBottom:8}}>
+            {Object.keys(STATS).map(k=>(
+              <button key={k} onClick={()=>setShowStatInfo(k)} style={{background:"none",border:"none",cursor:"pointer",padding:0,display:"flex",flexDirection:"column",alignItems:"center",gap:4}}>
+                <RingChart stat={k} value={(gs.stats||{})[k]||1} size={90}/>
+                <span style={{fontSize:9,color:STATS[k].color,fontFamily:"Cinzel,serif",letterSpacing:.5,textShadow:`0 0 6px ${STATS[k].color}60`}}>{STATS[k].name}</span>
+              </button>
+            ))}
+          </div>
+          <div style={{fontSize:9,color:"rgba(168,85,247,.25)",textAlign:"center",fontFamily:"Rajdhani,sans-serif"}}>нажми на кольцо → как качается</div>
+        </div>
+
+        {/* ── ЧИСЛА 2×3 ── */}
+        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8,marginBottom:12}}>
+          {[["⚡","XP",(gs.totalXp||0),"#d4a017"],["🏆","Уровень",lvi.level,"#a855f7"],["🔥","Комбо",(gs.combo||0),"#f97316"],["💰","Gold",(gs.gold||0),"#d4a017"],["❤️","HP",(gs.hp||0),"#e05555"],["💀","Смерти",(gs.deathCount||0),"#a855f7"]].map(([ico,lbl,val,col])=>(
+            <div key={lbl} style={{background:"rgba(15,8,35,.55)",border:`1px solid ${col}18`,borderRadius:14,padding:"13px 8px",textAlign:"center",backdropFilter:"blur(12px)",boxShadow:`0 0 12px ${col}06,inset 0 1px 0 rgba(255,255,255,.03)`}}>
+              <div style={{fontSize:18,marginBottom:3,filter:`drop-shadow(0 0 6px ${col}50)`}}>{ico}</div>
+              <AnimCounter value={val} color={col} size={22} duration={900}/>
+              <div style={{fontSize:8,color:"rgba(168,85,247,.35)",marginTop:3,fontFamily:"Cinzel,serif",letterSpacing:1}}>{lbl.toUpperCase()}</div>
+            </div>
+          ))}
+        </div>
+
+        {/* ── ДИАГНОСТИКА ── */}
+        <div style={{background:"rgba(15,8,35,.55)",border:"1px solid rgba(168,85,247,.12)",borderRadius:16,padding:16,marginBottom:12,backdropFilter:"blur(14px)"}}>
           <div style={S.cT}>🧭 ДИАГНОСТИКА</div>
           <DiagnosticsPanel gs={gs} lvi={lvi}/>
         </div>
 
-        {/* Ring Charts */}
-        <div style={{background:"#0e0b1a",border:"1px solid #1a0a2e",borderRadius:14,padding:16,marginBottom:12}}>
-          <div style={S.cT}>⚡ СТАТЫ</div>
-          <div style={{display:"flex",justifyContent:"space-around",marginBottom:12}}>
-            {Object.keys(STATS).map(k=>(
-              <button key={k} onClick={()=>setShowStatInfo(k)} style={{background:"none",border:"none",cursor:"pointer",padding:0}}>
-                <RingChart stat={k} value={(gs.stats||{})[k]||1} size={68}/>
-              </button>
-            ))}
-          </div>
-          <div style={{fontSize:10,color:"#2a1f4a",textAlign:"center",fontFamily:"Rajdhani,sans-serif"}}>Нажми на кольцо чтобы узнать как качается стат</div>
-        </div>
-
-        {/* Numbers */}
-        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8,marginBottom:12}}>
-          {[["⚡","XP",(gs.totalXp||0),"#d4a017"],["🏆","Уровень",lvi.level,"#7c3aed"],["🔥","Комбо",(gs.combo||0),"#f97316"],["💰","Gold",(gs.gold||0),"#d4a017"],["❤️","HP",(gs.hp||0),"#e05555"],["💀","Смерти",(gs.deathCount||0),"#5a3fa0"]].map(([i,l,v,c])=>(
-            <div key={l} style={{background:"#0e0b1a",border:`1px solid ${c}15`,borderRadius:12,padding:"11px 8px",textAlign:"center",boxShadow:`0 0 8px ${c}05`}}>
-              <div style={{fontSize:16}}>{i}</div>
-              <AnimCounter value={v} color={c} size={20} duration={800}/>
-              <div style={{fontSize:9,color:"#2a1f4a",marginTop:1,fontFamily:"Cinzel,serif",letterSpacing:1}}>{l.toUpperCase()}</div>
-            </div>
-          ))}
-        </div>
-
-        {/* XP Line chart */}
-        <div style={{background:"#0e0b1a",border:"1px solid #1a0a2e",borderRadius:14,padding:16,marginBottom:12}}>
+        {/* ── XP LINE CHART ── */}
+        <div style={{background:"rgba(15,8,35,.55)",border:"1px solid rgba(168,85,247,.12)",borderRadius:16,padding:16,marginBottom:12,backdropFilter:"blur(14px)"}}>
           <div style={S.cT}>📈 XP ЗА 7 ДНЕЙ</div>
           <LineChart data={gs.weekXP||Array(7).fill(0)}/>
-          <div style={{display:"flex",justifyContent:"space-between",marginTop:4}}>
-            {["Пн","Вт","Ср","Чт","Пт","Сб","Вс"].map(d=><div key={d} style={{fontSize:9,color:"#2a1f4a",fontFamily:"Rajdhani,sans-serif"}}>{d}</div>)}
+          <div style={{display:"flex",justifyContent:"space-between",marginTop:6}}>
+            {["Пн","Вт","Ср","Чт","Пт","Сб","Вс"].map(d=><div key={d} style={{fontSize:9,color:"rgba(168,85,247,.3)",fontFamily:"Rajdhani,sans-serif"}}>{d}</div>)}
           </div>
         </div>
 
-        {/* Weekly Reports */}
-        <div style={{background:"#0e0b1a",border:"1px solid #1a0a2e",borderRadius:14,padding:16,marginBottom:12}}>
+        {/* ── ЕЖЕНЕДЕЛЬНЫЕ ХРОНИКИ ── */}
+        <div style={{background:"rgba(15,8,35,.55)",border:"1px solid rgba(168,85,247,.12)",borderRadius:16,padding:16,marginBottom:12,backdropFilter:"blur(14px)"}}>
           <div style={S.cT}>📜 ЕЖЕНЕДЕЛЬНЫЕ ХРОНИКИ</div>
-          {(gs.weeklyReports||[]).length===0?<div style={{textAlign:"center",color:"#2a1f4a",padding:"20px 0",fontFamily:"Rajdhani,sans-serif",fontSize:12}}>Первый отчёт появится в конце недели</div>
-          :(gs.weeklyReports||[]).slice(0,6).map((r,i)=>(
-            <button key={i} onClick={()=>setShowWeeklyReport(r)} style={{width:"100%",background:"#07060d",border:"1px solid #1a0a2e",borderRadius:10,padding:"10px 13px",marginBottom:7,cursor:"pointer",textAlign:"left",display:"flex",justifyContent:"space-between",alignItems:"center",transition:"all .2s"}}
-              onMouseEnter={e=>{e.currentTarget.style.borderColor="#2a1f4a";}}
-              onMouseLeave={e=>{e.currentTarget.style.borderColor="#1a0a2e";}}>
-              <div>
-                <div style={{fontSize:12,fontWeight:700,color:"#e2d5f0",fontFamily:"Cinzel,serif"}}>Неделя #{r.week}</div>
-                <div style={{fontSize:11,color:"#5a3fa0",marginTop:2,fontFamily:"Rajdhani,sans-serif"}}>{r.totalQuests} квестов • {r.totalXp} XP</div>
-              </div>
-              <div style={{textAlign:"right"}}>
-                <div style={{fontSize:14,fontWeight:900,color:"#d4a017",fontFamily:"Rajdhani,sans-serif"}}>{(r.totalXp||0).toLocaleString()}</div>
-                <div style={{fontSize:9,color:"#2a1f4a",fontFamily:"Cinzel,serif"}}>XP</div>
-              </div>
-            </button>
-          ))}
+          {(gs.weeklyReports||[]).length===0
+            ?<div style={{textAlign:"center",color:"rgba(168,85,247,.3)",padding:"24px 0",fontFamily:"Rajdhani,sans-serif",fontSize:12}}>Первый отчёт появится в конце недели</div>
+            :(gs.weeklyReports||[]).slice(0,6).map((r,i)=>(
+              <button key={i} onClick={()=>setShowWeeklyReport(r)}
+                style={{width:"100%",background:"rgba(10,5,25,.6)",border:"1px solid rgba(168,85,247,.1)",borderRadius:12,padding:"11px 14px",marginBottom:7,cursor:"pointer",textAlign:"left",display:"flex",justifyContent:"space-between",alignItems:"center",backdropFilter:"blur(8px)",transition:"all .2s"}}
+                onMouseEnter={e=>{e.currentTarget.style.borderColor="rgba(168,85,247,.3)";e.currentTarget.style.background="rgba(168,85,247,.06)";}}
+                onMouseLeave={e=>{e.currentTarget.style.borderColor="rgba(168,85,247,.1)";e.currentTarget.style.background="rgba(10,5,25,.6)";}}>
+                <div>
+                  <div style={{fontSize:12,fontWeight:700,color:"#e2d5f0",fontFamily:"Cinzel,serif"}}>Неделя #{r.week}</div>
+                  <div style={{fontSize:10,color:"rgba(168,85,247,.4)",marginTop:3,fontFamily:"Rajdhani,sans-serif"}}>{r.totalQuests} квестов • комбо {r.combo}</div>
+                </div>
+                <div style={{textAlign:"right"}}>
+                  <div style={{fontSize:16,fontWeight:900,color:"#d4a017",fontFamily:"Rajdhani,sans-serif",textShadow:"0 0 8px rgba(212,160,23,.4)"}}>{(r.totalXp||0).toLocaleString()}</div>
+                  <div style={{fontSize:8,color:"rgba(168,85,247,.3)",fontFamily:"Cinzel,serif",letterSpacing:1}}>XP ЗА НЕДЕЛЮ</div>
+                </div>
+              </button>
+            ))
+          }
         </div>
 
-        {/* Achievements */}
-        <div style={{background:"#0e0b1a",border:"1px solid #1a0a2e",borderRadius:14,padding:16,marginBottom:12}}>
+        {/* ── ДОСТИЖЕНИЯ ── */}
+        <div style={{background:"rgba(15,8,35,.55)",border:"1px solid rgba(168,85,247,.12)",borderRadius:16,padding:16,marginBottom:12,backdropFilter:"blur(14px)"}}>
           <div style={S.cT}>🏅 ЛЕТОПИСЬ ПОДВИГОВ</div>
-          {[
-            {c:gs.totalXp>=500,ico:"⭐",n:"Первые шаги",d:"500+ XP"},
-            {c:gs.totalXp>=5000,ico:"🌟",n:"На пути",d:"5 000+ XP"},
-            {c:gs.totalXp>=20000,ico:"💫",n:"Ветеран",d:"20 000+ XP"},
-            {c:gs.combo>=7,ico:"💎",n:"Неделя воли",d:"Комбо 7 дней"},
-            {c:gs.combo>=14,ico:"🌑",n:"Теневой",d:"14 дней"},
-            {c:gs.combo>=21,ico:"🌊",n:"Океан Воли",d:"21 день"},
-            {c:lvi.level>=5,ico:"⚔️",n:"Воин",d:"Уровень 5"},
-            {c:lvi.level>=10,ico:"🗡",n:"Паладин",d:"Уровень 10"},
-            {c:lvi.level>=20,ico:"⚜️",n:"Легендарный",d:"Уровень 20"},
-            {c:lvi.level>=30,ico:"👑",n:"ЛЕГЕНДА",d:"Уровень 30 — конец пути"},
-            {c:(gs.habits||[]).some(h=>h.streak>=7),ico:"🛡",n:"Железная воля",d:"7 дней привычки"},
-            {c:(gs.habits||[]).some(h=>h.streak>=30),ico:"🗿",n:"Несгибаемый",d:"30 дней привычки"},
-            {c:(gs.sprints||[]).some(s=>s.completed),ico:"🎯",n:"Спринтер",d:"Спринт завершён"},
-            {c:(gs.deathCount||0)>=1,ico:"💀",n:"Возрождённый",d:"Пережил смерть"},
-          ].map(a=>(
-            <div key={a.n} style={{display:"flex",alignItems:"center",gap:9,padding:"6px 0",borderBottom:"1px solid #1a0a2e",opacity:a.c?1:0.2}}>
-              <span style={{fontSize:15,filter:a.c?"drop-shadow(0 0 4px #d4a01750)":""}}>{a.ico}</span>
-              <div style={{flex:1}}>
-                <div style={{fontSize:11,fontWeight:600,color:a.c?"#e2d5f0":"#2a1f4a",fontFamily:a.c?"Cinzel,serif":"inherit"}}>{a.n}</div>
-                <div style={{fontSize:10,color:"#2a1f4a",fontFamily:"Rajdhani,sans-serif"}}>{a.d}</div>
+          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:7}}>
+            {[
+              {c:gs.totalXp>=500,   ico:"⭐",n:"Первые шаги",  d:"500+ XP"},
+              {c:gs.totalXp>=5000,  ico:"🌟",n:"На пути",       d:"5 000+ XP"},
+              {c:gs.totalXp>=20000, ico:"💫",n:"Ветеран",       d:"20 000+ XP"},
+              {c:gs.combo>=7,       ico:"💎",n:"Неделя воли",   d:"Комбо 7 дней"},
+              {c:gs.combo>=14,      ico:"🌑",n:"Теневой",       d:"14 дней"},
+              {c:gs.combo>=21,      ico:"🌊",n:"Океан Воли",    d:"21 день"},
+              {c:lvi.level>=5,      ico:"⚔️",n:"Воин",          d:"Уровень 5"},
+              {c:lvi.level>=10,     ico:"🗡",n:"Паладин",       d:"Уровень 10"},
+              {c:lvi.level>=20,     ico:"⚜️",n:"Легендарный",   d:"Уровень 20"},
+              {c:lvi.level>=30,     ico:"👑",n:"ЛЕГЕНДА",       d:"Ур. 30"},
+              {c:(gs.habits||[]).some(h=>h.streak>=7), ico:"🛡",n:"Железная воля",d:"7 дней привычки"},
+              {c:(gs.habits||[]).some(h=>h.streak>=30),ico:"🗿",n:"Несгибаемый", d:"30 дней привычки"},
+              {c:(gs.sprints||[]).some(s=>s.completed),ico:"🎯",n:"Спринтер",    d:"Спринт завершён"},
+              {c:(gs.deathCount||0)>=1,ico:"💀",n:"Возрождённый",d:"Пережил смерть"},
+            ].map(a=>(
+              <div key={a.n} style={{background:a.c?"rgba(168,85,247,.08)":"rgba(6,4,15,.4)",border:`1px solid ${a.c?"rgba(168,85,247,.25)":"rgba(168,85,247,.06)"}`,borderRadius:12,padding:"10px 11px",display:"flex",alignItems:"center",gap:9,opacity:a.c?1:.35,transition:"all .3s",boxShadow:a.c?"0 0 12px rgba(168,85,247,.06)":"none"}}>
+                <span style={{fontSize:18,filter:a.c?"drop-shadow(0 0 6px rgba(212,160,23,.6))":"none",flexShrink:0}}>{a.ico}</span>
+                <div style={{minWidth:0}}>
+                  <div style={{fontSize:10,fontWeight:700,color:a.c?"#e2d5f0":"rgba(168,85,247,.3)",fontFamily:"Cinzel,serif",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{a.n}</div>
+                  <div style={{fontSize:9,color:"rgba(168,85,247,.35)",fontFamily:"Rajdhani,sans-serif",marginTop:1}}>{a.d}</div>
+                </div>
+                {a.c&&<span style={{color:"#d4a017",fontWeight:900,fontSize:14,marginLeft:"auto",flexShrink:0,textShadow:"0 0 8px rgba(212,160,23,.5)"}}>✓</span>}
               </div>
-              {a.c&&<span style={{color:"#d4a017",fontWeight:800,fontSize:12}}>✓</span>}
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
 
-        {/* Log */}
-        {(gs.log||[]).length>0&&<div style={{background:"#0e0b1a",border:"1px solid #1a0a2e",borderRadius:14,padding:16}}>
+        {/* ── ЛЕТОПИСЬ СОБЫТИЙ ── */}
+        {(gs.log||[]).length>0&&<div style={{background:"rgba(15,8,35,.55)",border:"1px solid rgba(168,85,247,.12)",borderRadius:16,padding:16,backdropFilter:"blur(14px)"}}>
           <div style={S.cT}>📜 ЛЕТОПИСЬ</div>
           {(gs.log||[]).slice(0,30).map(e=>(
-            <div key={e.id} style={{padding:"6px 0",borderBottom:"1px solid #1a0a2e",display:"flex",justifyContent:"space-between",alignItems:"flex-start"}}>
-              <div style={{flex:1,paddingRight:8}}>
-                <div style={{fontSize:11,color:e.t==="fail"?"#e05555":e.t==="boss"?"#d4a017":e.t==="rest"?"#60a5fa":"#7c6a9a",fontFamily:"Rajdhani,sans-serif"}}>{e.txt}</div>
-                <div style={{fontSize:9,color:"#1a0a2e",marginTop:1,fontFamily:"Rajdhani,sans-serif"}}>{e.time}</div>
+            <div key={e.id} style={{padding:"7px 0",borderBottom:"1px solid rgba(168,85,247,.07)",display:"flex",justifyContent:"space-between",alignItems:"flex-start",gap:8}}>
+              <div style={{flex:1,minWidth:0}}>
+                <div style={{fontSize:11,color:e.t==="fail"?"#e05555":e.t==="boss"?"#d4a017":e.t==="rest"?"#60a5fa":"rgba(200,185,230,.6)",fontFamily:"Rajdhani,sans-serif",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{e.txt}</div>
+                <div style={{fontSize:9,color:"rgba(168,85,247,.2)",marginTop:1,fontFamily:"Rajdhani,sans-serif"}}>{e.time}</div>
               </div>
               <div style={{textAlign:"right",flexShrink:0}}>
                 {e.xp!==0&&<div style={{fontSize:11,fontWeight:700,color:e.xp>0?"#d4a017":"#e05555",fontFamily:"Rajdhani,sans-serif"}}>{e.xp>0?"+":""}{e.xp}XP</div>}
@@ -1938,32 +2105,44 @@ export default function App() {
 }
 
 const S={
-  root:     {background:"#07060d",minHeight:"100vh",color:"#e2d5f0",fontFamily:"'Segoe UI',system-ui,sans-serif",maxWidth:520,margin:"0 auto",position:"relative"},
-  overlay:  {position:"fixed",inset:0,background:"rgba(0,0,0,.94)",zIndex:200,display:"flex",alignItems:"center",justifyContent:"center",padding:16},
-  toast:    {position:"fixed",top:14,left:"50%",transform:"translateX(-50%)",zIndex:400,border:"1px solid",padding:"8px 18px",borderRadius:12,color:"#e2d5f0",fontWeight:700,fontSize:12,whiteSpace:"nowrap",boxShadow:"0 8px 32px rgba(0,0,0,.8)",fontFamily:"Rajdhani,sans-serif"},
-  header:   {background:"linear-gradient(160deg,#0a0714 0%,#120a1e 100%)",padding:"14px 13px 12px",borderBottom:"1px solid #1a0a2e"},
-  tabs:     {display:"flex",background:"#07060d",borderBottom:"1px solid #1a0a2e"},
+  root:     {background:"#06040f",minHeight:"100vh",color:"#e2d5f0",fontFamily:"'Segoe UI',system-ui,sans-serif",maxWidth:520,margin:"0 auto",position:"relative",overflow:"hidden"},
+  overlay:  {position:"fixed",inset:0,background:"rgba(4,2,12,.92)",backdropFilter:"blur(8px)",zIndex:200,display:"flex",alignItems:"center",justifyContent:"center",padding:16},
+  toast:    {position:"fixed",top:14,left:"50%",transform:"translateX(-50%)",zIndex:400,border:"1px solid rgba(168,85,247,.4)",padding:"9px 20px",borderRadius:14,color:"#e2d5f0",fontWeight:700,fontSize:12,whiteSpace:"nowrap",background:"rgba(15,8,35,.85)",backdropFilter:"blur(16px)",boxShadow:"0 8px 32px rgba(0,0,0,.8),0 0 20px rgba(168,85,247,.15)",fontFamily:"Rajdhani,sans-serif"},
+  header:   {background:"linear-gradient(160deg,rgba(10,4,25,.95) 0%,rgba(20,8,40,.98) 100%)",backdropFilter:"blur(20px)",padding:"14px 13px 12px",borderBottom:"1px solid rgba(168,85,247,.12)",position:"relative"},
+  tabs:     {display:"flex",background:"rgba(6,4,15,.9)",backdropFilter:"blur(12px)",borderBottom:"1px solid rgba(168,85,247,.1)"},
   tab:      {flex:1,padding:"10px 0",background:"none",border:"none",borderBottom:"2px solid transparent",cursor:"pointer",fontSize:9,transition:"all .2s"},
-  body:     {padding:"12px 12px 60px"},
-  card:     {background:"#0e0b1a",border:"1px solid #1a0a2e",borderRadius:13,padding:13},
-  cT:       {fontWeight:800,color:"#d4a017",marginBottom:10,fontSize:10,letterSpacing:"2px",textTransform:"uppercase",fontFamily:"Cinzel,serif"},
-  badge:    {borderRadius:7,padding:"4px 8px",fontSize:11,fontWeight:700},
-  nameIn:   {background:"#0e0b1a",border:"1px solid #7c3aed",borderRadius:8,color:"#e2d5f0",padding:"3px 9px",fontSize:14,width:120,fontFamily:"Cinzel,serif"},
-  bGreen:   {background:"#081a08",border:"1px solid #4ade80",borderRadius:8,color:"#4ade80",padding:"3px 9px",cursor:"pointer",fontWeight:700,fontSize:12},
-  bGray:    {background:"#1a0a2e",border:"1px solid #2a1f4a",borderRadius:8,color:"#5a3fa0",padding:"3px 9px",cursor:"pointer",fontSize:12},
-  bWin:     {background:"#081a08",border:"1px solid #4ade80",borderRadius:9,color:"#4ade80",padding:"7px 13px",cursor:"pointer",fontSize:12,fontWeight:700},
-  bFail:    {background:"#1a0808",border:"1px solid #e05555",borderRadius:9,color:"#e05555",padding:"7px 13px",cursor:"pointer",fontSize:12,fontWeight:700},
-  inp:      {width:"100%",background:"#07060d",border:"1px solid #2a1f4a",borderRadius:8,color:"#e2d5f0",padding:"8px 10px",fontSize:12,outline:"none",fontFamily:"Rajdhani,sans-serif"},
-  sel:      {width:"100%",background:"#07060d",border:"1px solid #2a1f4a",borderRadius:8,color:"#e2d5f0",padding:"7px 9px",fontSize:12,outline:"none"},
-  settCard: {background:"#0e0b1a",border:"1px solid #1a0a2e",borderRadius:12,padding:14,marginBottom:12},
-  settTitle:{fontWeight:700,color:"#d4a017",marginBottom:8,fontSize:12,fontFamily:"Cinzel,serif",letterSpacing:1},
+  body:     {padding:"12px 12px 90px",position:"relative",zIndex:1},
+  card:     {background:"rgba(15,8,35,.6)",border:"1px solid rgba(168,85,247,.15)",borderRadius:16,padding:13,backdropFilter:"blur(12px)",boxShadow:"0 4px 24px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.04)"},
+  cT:       {fontWeight:800,color:"#a855f7",marginBottom:10,fontSize:10,letterSpacing:"2px",textTransform:"uppercase",fontFamily:"Cinzel,serif",textShadow:"0 0 12px rgba(168,85,247,.5)"},
+  badge:    {borderRadius:8,padding:"4px 10px",fontSize:11,fontWeight:700,backdropFilter:"blur(8px)"},
+  nameIn:   {background:"rgba(15,8,35,.7)",border:"1px solid rgba(168,85,247,.4)",borderRadius:10,color:"#e2d5f0",padding:"4px 10px",fontSize:14,width:130,fontFamily:"Cinzel,serif",backdropFilter:"blur(8px)"},
+  bGreen:   {background:"rgba(74,222,128,.08)",border:"1px solid rgba(74,222,128,.35)",borderRadius:10,color:"#4ade80",padding:"4px 10px",cursor:"pointer",fontWeight:700,fontSize:12,backdropFilter:"blur(8px)",boxShadow:"0 0 12px rgba(74,222,128,.1)"},
+  bGray:    {background:"rgba(168,85,247,.08)",border:"1px solid rgba(168,85,247,.2)",borderRadius:10,color:"#a855f7",padding:"4px 10px",cursor:"pointer",fontSize:12,backdropFilter:"blur(8px)"},
+  bWin:     {background:"rgba(74,222,128,.08)",border:"1px solid rgba(74,222,128,.35)",borderRadius:10,color:"#4ade80",padding:"8px 14px",cursor:"pointer",fontSize:12,fontWeight:700,backdropFilter:"blur(8px)",boxShadow:"0 0 14px rgba(74,222,128,.1)",transition:"all .2s"},
+  bFail:    {background:"rgba(224,85,85,.08)",border:"1px solid rgba(224,85,85,.35)",borderRadius:10,color:"#e05555",padding:"8px 14px",cursor:"pointer",fontSize:12,fontWeight:700,backdropFilter:"blur(8px)",boxShadow:"0 0 14px rgba(224,85,85,.1)",transition:"all .2s"},
+  inp:      {width:"100%",background:"rgba(6,4,15,.7)",border:"1px solid rgba(168,85,247,.2)",borderRadius:10,color:"#e2d5f0",padding:"9px 12px",fontSize:12,outline:"none",fontFamily:"Rajdhani,sans-serif",backdropFilter:"blur(8px)",transition:"border-color .2s"},
+  sel:      {width:"100%",background:"rgba(6,4,15,.8)",border:"1px solid rgba(168,85,247,.2)",borderRadius:10,color:"#e2d5f0",padding:"8px 10px",fontSize:12,outline:"none",backdropFilter:"blur(8px)"},
+  settCard: {background:"rgba(15,8,35,.5)",border:"1px solid rgba(168,85,247,.12)",borderRadius:14,padding:14,marginBottom:12,backdropFilter:"blur(12px)",boxShadow:"0 4px 20px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.03)"},
+  settTitle:{fontWeight:700,color:"#a855f7",marginBottom:8,fontSize:12,fontFamily:"Cinzel,serif",letterSpacing:1,textShadow:"0 0 10px rgba(168,85,247,.4)"},
 };
 const CSS=`
   @keyframes popIn{from{transform:scale(.4);opacity:0}to{transform:scale(1);opacity:1}}
   @keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
   @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+  @keyframes mistDrift1{0%{transform:translate(0,0) scale(1);opacity:.18}50%{transform:translate(40px,-30px) scale(1.15);opacity:.28}100%{transform:translate(0,0) scale(1);opacity:.18}}
+  @keyframes mistDrift2{0%{transform:translate(0,0) scale(1.1);opacity:.12}60%{transform:translate(-50px,40px) scale(0.9);opacity:.22}100%{transform:translate(0,0) scale(1.1);opacity:.12}}
+  @keyframes mistDrift3{0%{transform:translate(0,0) scale(1);opacity:.08}40%{transform:translate(30px,50px) scale(1.2);opacity:.16}100%{transform:translate(0,0) scale(1);opacity:.08}}
+  @keyframes shimmer{0%{background-position:-200% center}100%{background-position:200% center}}
   *{box-sizing:border-box}
-  ::-webkit-scrollbar{width:3px}::-webkit-scrollbar-track{background:#07060d}::-webkit-scrollbar-thumb{background:#2a1f4a;border-radius:2px}
-  select option{background:#07060d;color:#e2d5f0}
-  button:active{transform:scale(.97)}
+  ::-webkit-scrollbar{width:3px}
+  ::-webkit-scrollbar-track{background:#06040f}
+  ::-webkit-scrollbar-thumb{background:rgba(168,85,247,.3);border-radius:2px}
+  ::-webkit-scrollbar-thumb:hover{background:rgba(168,85,247,.5)}
+  select option{background:#0a0520;color:#e2d5f0}
+  button:active{transform:scale(.96)!important}
+  input:focus{border-color:rgba(168,85,247,.5)!important;box-shadow:0 0 0 3px rgba(168,85,247,.08)!important}
+  .glass-card{background:rgba(15,8,35,.55);border:1px solid rgba(168,85,247,.15);border-radius:16px;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 4px 24px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.05)}
+  .glass-card-gold{background:rgba(20,12,5,.55);border:1px solid rgba(212,160,23,.18);border-radius:16px;backdrop-filter:blur(14px);box-shadow:0 4px 24px rgba(0,0,0,.5),inset 0 1px 0 rgba(212,160,23,.06)}
+  .neon-purple{box-shadow:0 0 20px rgba(168,85,247,.25),0 0 40px rgba(168,85,247,.1)}
+  .neon-gold{box-shadow:0 0 20px rgba(212,160,23,.25),0 0 40px rgba(212,160,23,.1)}
 `;
