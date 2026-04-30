@@ -26,9 +26,7 @@ const getLvlName = (l) => LVL_NAMES[Math.min(l-1,LVL_NAMES.length-1)];
 
 /* ─── Fantasy Names ───────────────────────────────────────────────────────── */
 const FANTASY_NAMES = [
-  "Берсерк","Страж","Гладиатор","Рыцарь","Мудрец",
-  "Алхимик","Ассасин","Монах","Пророк","Инквизитор",
-  "Хранитель","Странник","Маг","Гоблин","Герой",
+  "Герой","Маг","Ассасин","Берсерк","Рыцарь","Инквизитор","Алхимик","Странник",
 ];
 
 /* ─── Stats ───────────────────────────────────────────────────────────────── */
@@ -225,7 +223,7 @@ const saveState = async(gs)=>{
     CS.set("rpg8-state", JSON.stringify(state)),
     CS.set("rpg8-quests",JSON.stringify({customDaily:gs.customDaily||[],customOnce:gs.customOnce||[],questEdits:gs.questEdits||{}})),
     CS.set("rpg8-habits",JSON.stringify(gs.habits||[])),
-    CS.set("rpg8-shop",  JSON.stringify({shop:gs.shop,purchases:(gs.purchases||[]).slice(0,20)})),
+    CS.set("rpg8-shop",  JSON.stringify({shop:gs.shop,purchases:(gs.purchases||[]).slice(0,20),inventory:(gs.inventory||[])})),
     CS.set("rpg8-sprint",JSON.stringify({sprints:gs.sprints||[],log:(gs.log||[]).slice(0,60),weeklyReports:gs.weeklyReports||[]})),
   ]);
 };
@@ -242,12 +240,12 @@ const loadState = async()=>{
   }
   const char=JSON.parse(cS), state=JSON.parse(sS||"{}"), quests=JSON.parse(qS||"{}");
   const habits=JSON.parse(hS||"[]"), shopD=JSON.parse(shS||"{}"), spD=JSON.parse(spS||"{}");
-  return migrate({...char,...state,...quests,habits,shop:shopD.shop||[...DEF_SHOP],purchases:shopD.purchases||[],sprints:spD.sprints||[],log:spD.log||[],weeklyReports:spD.weeklyReports||[]});
+  return migrate({...char,...state,...quests,habits,shop:shopD.shop||[...DEF_SHOP],purchases:shopD.purchases||[],inventory:shopD.inventory||[],sprints:spD.sprints||[],log:spD.log||[],weeklyReports:spD.weeklyReports||[]});
 };
 
 const migrate=(s)=>{
   if(!s.stats||!s.stats.telo) s.stats={telo:s.stats?.STR||1,razum:s.stats?.INT||1,vliyanie:s.stats?.LNG||1,volya:s.stats?.WIS||1,delo:s.stats?.VIT||1};
-  const fields={habits:[],sprints:[],log:[],weeklyReports:[],shop:DEF_SHOP,purchases:[],customDaily:[],customOnce:[],questEdits:{},bossQuests:{},customBossQuests:[],weekXP:Array(7).fill(0),deathCount:0,goal:"",selectedSpheres:[],prevClassId:"",createdAt:today(),nextDouble:false,immunityUsed:false,statLastUpdate:{}};
+  const fields={habits:[],sprints:[],log:[],weeklyReports:[],shop:DEF_SHOP,purchases:[],inventory:[],customDaily:[],customOnce:[],questEdits:{},bossQuests:{},customBossQuests:[],weekXP:Array(7).fill(0),deathCount:0,goal:"",selectedSpheres:[],prevClassId:"",createdAt:today(),nextDouble:false,immunityUsed:false,statLastUpdate:{}};
   Object.keys(fields).forEach(k=>{if(s[k]===undefined)s[k]=fields[k];});
   if(!s.maxHp) s.maxHp=100;
   s.version=DATA_VERSION;
@@ -853,6 +851,7 @@ export default function App() {
   const [resetStep,setResetStep] = useState(0);
   const [tab,setTab]             = useState("quests");
   const [sub,setSub]             = useState("daily");
+  const [showInventory,setShowInventory] = useState(false);
   const [toast,setToast]         = useState(null);
   const [lvlUp,setLvlUp]         = useState(null);
   const [classNotif,setClassNotif]   = useState(null);
@@ -931,7 +930,6 @@ export default function App() {
 
       setGs(s); setLoading(false);
       if(s.deathPending) setDeathScreen(true);
-      else if(s.goal) setTimeout(()=>setShowGoal(true),500);
     }catch(e){console.error(e);setShowOnboarding(true);setLoading(false);}
   };
 
@@ -947,7 +945,6 @@ export default function App() {
   const finishOnboarding=(name,sphereIds,habitId,goal)=>{
     const s=freshChar(name,sphereIds,habitId,goal);
     setGs(s); saveState(s); setShowOnboarding(false);
-    setTimeout(()=>setShowGoal(true),500);
   };
 
   /* ── Quest ──────────────────────────────────────────────────────────────── */
@@ -996,7 +993,7 @@ export default function App() {
   const confirmBossWin=(q,reflection)=>{
     setBossReflection(null);
     if(reflection) upd(prev=>({...prev,log:[{id:Date.now(),txt:`⚔️ "${q.title}": ${reflection}`,xp:0,gold:0,t:"boss",time:nowStr()},...(prev.log||[]).slice(0,59)]}));
-    setPendingQ({q,isBoss:true});
+    completeQuest(q,1.0,true);
   };
   const failBossQ=(q)=>upd(prev=>({...prev,hp:Math.max(0,prev.hp-(q.pen||40)),combo:0,bossQuests:{...prev.bossQuests,[q.id]:"fail"},log:[{id:Date.now(),txt:`💀 Провал: ${q.title}`,xp:-(q.pen||40),gold:0,t:"fail",time:nowStr()},...(prev.log||[]).slice(0,59)]}));
 
@@ -1046,12 +1043,16 @@ export default function App() {
 
   /* ── Boss Quests ────────────────────────────────────────────────────────── */
   const addBossFromTemplate=(tmpl)=>{
+    const activeCount=(gs.customBossQuests||[]).filter(q=>!gs.bossQuests[q.id]).length;
+    if(activeCount>=5){pop("Максимум 5 боссов за неделю",false);return;}
     const q={id:`bq-${Date.now()}`,title:tmpl.title,desc:"Недельный вызов",stat:tmpl.stat,xp:250,pen:40,icon:"⚔️",custom:true};
     upd(prev=>({...prev,customBossQuests:[...(prev.customBossQuests||[]),q]}));
     setShowBossTemplates(false); pop(`✅ "${tmpl.title}" добавлен!`);
   };
   const addCustomBoss=()=>{
     if(!bossBuf.title.trim()){pop("Введи название",false);return;}
+    const activeCount=(gs.customBossQuests||[]).filter(q=>!gs.bossQuests[q.id]).length;
+    if(activeCount>=5){pop("Максимум 5 боссов за неделю",false);return;}
     const q={id:`bq-${Date.now()}`,title:bossBuf.title.trim(),desc:"Недельный вызов",stat:bossBuf.stat,xp:parseInt(bossBuf.xp)||250,pen:parseInt(bossBuf.pen)||40,icon:"⚔️",custom:true};
     upd(prev=>({...prev,customBossQuests:[...(prev.customBossQuests||[]),q]}));
     setShowAddBoss(false); setBossBuf({title:"",stat:"telo",xp:250,pen:30}); pop("✅ Босс добавлен!");
@@ -1073,8 +1074,11 @@ export default function App() {
   const buyItem=(item)=>upd(prev=>{
     if(prev.gold<item.cost){pop("Мало Gold!",false);return prev;}
     pop(`✅ Ты заработал это: ${item.name}`);
-    return{...prev,gold:prev.gold-item.cost,purchases:[{id:Date.now(),name:item.name,cost:item.cost,time:nowStr()},...(prev.purchases||[])],log:[{id:Date.now(),txt:`🛒 ${item.name}`,xp:0,gold:-item.cost,t:"shop",time:nowStr()},...(prev.log||[]).slice(0,59)]};
+    const invItem={id:Date.now(),name:item.name,icon:item.icon,cost:item.cost,boughtAt:nowStr(),used:false};
+    return{...prev,gold:prev.gold-item.cost,inventory:[invItem,...(prev.inventory||[])].slice(0,50),purchases:[{id:Date.now(),name:item.name,cost:item.cost,time:nowStr()},...(prev.purchases||[])],log:[{id:Date.now(),txt:`🛒 ${item.name}`,xp:0,gold:-item.cost,t:"shop",time:nowStr()},...(prev.log||[]).slice(0,59)]};
   });
+  const useInventoryItem=(id)=>upd(prev=>({...prev,inventory:(prev.inventory||[]).map(i=>i.id===id?{...i,used:true}:i)}));
+  const removeInventoryItem=(id)=>upd(prev=>({...prev,inventory:(prev.inventory||[]).filter(i=>i.id!==id)}));
   const saveShopItem=()=>{upd(prev=>({...prev,shop:prev.shop.map(i=>i.id!==editingShop?i:{...i,...editShopBuf,cost:parseInt(editShopBuf.cost)||50})}));setEditingShop(null);pop("✅");};
   const deleteShopItem=(id)=>upd(prev=>({...prev,shop:prev.shop.filter(i=>i.id!==id)}));
 
@@ -1136,20 +1140,7 @@ export default function App() {
         <div style={{fontSize:15,color:cls.color,marginTop:4,fontFamily:"Cinzel,serif"}}>{getLvlName(lvlUp)}</div>
       </div></div>}
       {classNotif&&<ClassNotif cls={classNotif} onClose={()=>setClassNotif(null)}/>}
-      {pendingQ&&<div style={S.overlay} onClick={()=>setPendingQ(null)}>
-        <div style={{background:"rgba(15,8,35,.55)",border:"1px solid #5a3fa0",borderRadius:20,padding:22,width:"min(340px,92vw)",boxShadow:"0 0 40px #7c3aed15"}} onClick={e=>e.stopPropagation()}>
-          <div style={{fontWeight:700,fontSize:15,color:"#d4a017",marginBottom:6,fontFamily:"Cinzel,serif"}}>⚔️ {pendingQ.q.title}</div>
-          <div style={{fontSize:11,color:"#5a3fa0",marginBottom:14,fontFamily:"Rajdhani,sans-serif"}}>Насколько хорошо выполнено?</div>
-          {OVERPERF.map(op=>(
-            <button key={op.id} onClick={()=>completeQuest(pendingQ.q,op.mult,pendingQ.isBoss)}
-              style={{width:"100%",background:`${op.color}0e`,border:`1px solid ${op.color}40`,borderRadius:12,padding:"12px 14px",marginBottom:7,cursor:"pointer",display:"flex",justifyContent:"space-between",alignItems:"center",boxShadow:`0 0 8px ${op.color}08`}}>
-              <span style={{color:op.color,fontWeight:700,fontSize:14,fontFamily:"Rajdhani,sans-serif"}}>{op.label}</span>
-              <span style={{color:"#5a3fa0",fontSize:11,fontFamily:"Rajdhani,sans-serif"}}>~{Math.min(Math.floor((pendingQ.q.xp||50)*MAX_XP_MULT),Math.floor((pendingQ.q.xp||50)*op.mult*(1+gs.combo*0.1)))} XP</span>
-            </button>
-          ))}
-          <button onClick={()=>setPendingQ(null)} style={{...S.bGray,width:"100%",padding:"10px",marginTop:3}}>Отмена</button>
-        </div>
-      </div>}
+      
       {bossReflection&&<BossReflection title={bossReflection.q.title} onSubmit={(t)=>confirmBossWin(bossReflection.q,t)} onSkip={()=>{confirmBossWin(bossReflection.q,null);setBossReflection(null);}}/>}
       {sprintReflection&&<SprintReflection sprint={(gs.sprints||[]).find(s=>s.id===sprintReflection.sprintId)} type={sprintReflection.type} onSubmit={submitSprintReflection} onCancel={()=>setSprintReflection(null)}/>}
       {showWeeklyReport&&<WeeklyReportModal report={showWeeklyReport} onClose={()=>setShowWeeklyReport(null)}/>}
@@ -1235,26 +1226,25 @@ export default function App() {
           </div>
           <div style={S.settCard}>
             <div style={S.settTitle}>🔄 Сферы развития</div>
-            <div style={{fontSize:11,color:"#5a3fa0",marginBottom:8,fontFamily:"Rajdhani,sans-serif"}}>Активно: {(gs.selectedSpheres||[]).length}/5</div>
+            <div style={{fontSize:11,color:"#5a3fa0",marginBottom:8,fontFamily:"Rajdhani,sans-serif"}}>Активно: {(gs.selectedSpheres||[]).length} из {SPHERES.length}</div>
             <div style={{display:"flex",flexWrap:"wrap",gap:5,marginBottom:8}}>
               {SPHERES.map(sp=>{
                 const isSel=(gs.selectedSpheres||[]).includes(sp.id);
                 const cat=SPHERE_CATS.find(c=>c.id===sp.stat);
-                const maxSpheres=gs.sphere5Notified?5:gs.sphere4Notified?4:3;
-                const canAdd=!isSel&&(gs.selectedSpheres||[]).length<maxSpheres;
+                const canAdd=!isSel;
                 return <button key={sp.id} onClick={()=>{
                   if(isSel) upd(prev=>({...prev,selectedSpheres:(prev.selectedSpheres||[]).filter(x=>x!==sp.id),customDaily:(prev.customDaily||[]).filter(q=>!q.id.startsWith(`init-${sp.id}`))}));
                   else if(canAdd){
                     const newQs=sp.quests.map((q,i)=>({id:`init-${sp.id}-${i}-${Date.now()}`,title:q.title,desc:q.desc,xp:q.xp,stat:sp.stat,catId:sp.stat,icon:sp.icon}));
                     upd(prev=>({...prev,selectedSpheres:[...(prev.selectedSpheres||[]),sp.id],customDaily:[...(prev.customDaily||[]),...newQs]}));
                     pop(`✅ "${sp.name}" добавлена!`);
-                  } else if(!canAdd&&!isSel) pop(`Разблокируется позже (текущий лимит: ${maxSpheres})`,false);
+                  }
                 }} style={{background:isSel?`${cat?.color||"#7c3aed"}15`:"#07060d",border:`1px solid ${isSel?cat?.color||"#7c3aed":"rgba(168,85,247,.1)"}`,borderRadius:8,padding:"5px 9px",cursor:"pointer",color:isSel?cat?.color||"#7c3aed":"#5a3fa0",fontSize:10,fontWeight:isSel?700:400,opacity:!isSel&&!canAdd?.35:1}}>
                   {sp.icon} {sp.name} {isSel?"✓":""}
                 </button>;
               })}
             </div>
-            <div style={{fontSize:10,color:"rgba(168,85,247,.35)",fontFamily:"Rajdhani,sans-serif"}}>4-я сфера открывается через 7 дней • 5-я через 30 дней</div>
+            <div style={{fontSize:10,color:"rgba(168,85,247,.35)",fontFamily:"Rajdhani,sans-serif"}}>Выбирай любые сферы в любое время</div>
           </div>
           <div style={S.settCard}>
             <div style={S.settTitle}>🛡 Добавить привычку</div>
@@ -1447,7 +1437,7 @@ export default function App() {
       <div style={{position:"fixed",bottom:16,left:"50%",transform:"translateX(-50%)",zIndex:100,width:"calc(min(520px,100vw) - 24px)"}}>
         <div style={{display:"flex",background:"rgba(10,5,25,.85)",backdropFilter:"blur(20px)",WebkitBackdropFilter:"blur(20px)",border:"1px solid rgba(168,85,247,.2)",borderRadius:20,padding:"5px",gap:3,boxShadow:"0 8px 32px rgba(0,0,0,.6),0 0 0 1px rgba(168,85,247,.05),inset 0 1px 0 rgba(255,255,255,.05)"}}>
           {[["quests","⚔️","Квесты"],["sprints","🎯","Спринты"],["habits","🛡","Привычки"],["shop","🔓","Разреш."],["chronicles","📊","Стата"]].map(([t,ico,l])=>(
-            <button key={t} onClick={()=>setTab(t)} style={{flex:1,padding:"8px 2px 6px",background:tab===t?"rgba(168,85,247,.18)":"none",border:"none",borderRadius:14,cursor:"pointer",display:"flex",flexDirection:"column",alignItems:"center",gap:2,transition:"all .2s",boxShadow:tab===t?"0 0 12px rgba(168,85,247,.2),inset 0 1px 0 rgba(168,85,247,.1)":"none"}}>
+            <button key={t} onClick={()=>{setTab(t);if(t==="quests")setSub("daily");if(t==="shop")setSub("store");}} style={{flex:1,padding:"8px 2px 6px",background:tab===t?"rgba(168,85,247,.18)":"none",border:"none",borderRadius:14,cursor:"pointer",display:"flex",flexDirection:"column",alignItems:"center",gap:2,transition:"all .2s",boxShadow:tab===t?"0 0 12px rgba(168,85,247,.2),inset 0 1px 0 rgba(168,85,247,.1)":"none"}}>
               <span style={{fontSize:16,filter:tab===t?"drop-shadow(0 0 6px rgba(168,85,247,.8))":"none",transition:"filter .2s"}}>{ico}</span>
               <span style={{fontSize:8,fontWeight:tab===t?700:400,color:tab===t?"#a855f7":"rgba(168,85,247,.35)",fontFamily:tab===t?"Cinzel,serif":"inherit",letterSpacing:tab===t?.5:0,transition:"all .2s"}}>{l}</span>
               {tab===t&&<div style={{width:16,height:2,background:"#a855f7",borderRadius:1,boxShadow:"0 0 6px rgba(168,85,247,.8)"}}/>}
@@ -1492,7 +1482,7 @@ export default function App() {
                         <button onClick={()=>setEditingQ(null)} style={{...S.bGray,padding:"8px 11px"}}>✗</button>
                       </div>
                     </div>:<div
-                      onClick={()=>!done&&setPendingQ({q,isBoss:false})}
+                      onClick={()=>!done&&completeQuest(q,1.0,false)}
                       style={{
                         display:"flex",alignItems:"center",gap:0,marginBottom:7,borderRadius:16,overflow:"hidden",
                         background:done?"rgba(5,20,5,.5)":"rgba(15,8,35,.55)",
@@ -1538,9 +1528,14 @@ export default function App() {
                     {SPHERE_CATS.map(c=><option key={c.id} value={c.id}>{STATS[c.id]?.icon} {STATS[c.id]?.name}</option>)}
                   </select>
                 </div>
-                <div style={{flex:1}}><div style={{fontSize:10,color:"#5a3fa0",marginBottom:3,fontFamily:"Cinzel,serif"}}>XP (макс 200)</div>
-                  <input type="number" value={addQBuf.xp} onChange={e=>setAddQBuf(b=>({...b,xp:Math.min(200,parseInt(e.target.value)||50)}))} style={S.inp}/>
-                </div>
+              </div>
+              <div style={{fontSize:10,color:"#5a3fa0",marginBottom:5,fontFamily:"Cinzel,serif"}}>XP ЗА КВЕСТ</div>
+              <div style={{display:"flex",gap:5,marginBottom:9,flexWrap:"wrap"}}>
+                {[{xp:25,label:"Лёгкий",color:"#4ade80"},{xp:50,label:"Средний",color:"#fbbf24"},{xp:80,label:"Сложный",color:"#f97316"},{xp:120,label:"Эпик",color:"#e05555"},{xp:200,label:"Легенда",color:"#a855f7"}].map(t=>(
+                  <button key={t.xp} onClick={()=>setAddQBuf(b=>({...b,xp:t.xp}))} style={{flex:1,minWidth:0,background:addQBuf.xp===t.xp?`${t.color}15`:"#07060d",border:`1px solid ${addQBuf.xp===t.xp?t.color:"rgba(168,85,247,.15)"}`,borderRadius:9,padding:"7px 3px",cursor:"pointer",color:addQBuf.xp===t.xp?t.color:"#5a3fa0",fontSize:9,fontWeight:addQBuf.xp===t.xp?700:400,textAlign:"center",lineHeight:1.4,fontFamily:"Rajdhani,sans-serif"}}>
+                    {t.label}<br/><span style={{fontSize:10,fontWeight:700}}>{t.xp}</span>
+                  </button>
+                ))}
               </div>
               <div style={{display:"flex",gap:7}}>
                 <button onClick={addCustomDaily} style={{...S.bWin,flex:1,padding:"8px",fontFamily:"Cinzel,serif"}}>✓ Добавить</button>
@@ -1688,7 +1683,7 @@ export default function App() {
             {(gs.customOnce||[]).filter(q=>!gs.daily[q.id]).map(q=>(
               <div key={q.id} style={{background:"rgba(15,8,35,.55)",border:"1px solid rgba(168,85,247,.12)",borderRadius:10,padding:"9px 11px",marginBottom:6,display:"flex",alignItems:"center",gap:8}}>
                 <span style={{fontSize:20}}>⚡</span>
-                <div style={{flex:1,cursor:"pointer"}} onClick={()=>setPendingQ({q:{...q,catId:q.stat},isBoss:false})}>
+                <div style={{flex:1,cursor:"pointer"}} onClick={()=>completeQuest({...q,catId:q.stat},1.0,false)}>
                   <div style={{fontWeight:700,fontSize:12,color:"#e2d5f0",fontFamily:"Rajdhani,sans-serif"}}>{q.title}</div>
                   <div style={{fontSize:10,color:"#d4a017",marginTop:1,fontFamily:"Rajdhani,sans-serif"}}>+{q.xp} XP • {STATS[q.stat]?.icon}</div>
                 </div>
@@ -1871,6 +1866,16 @@ export default function App() {
 
       {/* ══ SHOP ══ */}
       {tab==="shop"&&<div style={S.body}>
+        {/* Shop / Inventory tabs */}
+        <div style={{display:"flex",background:"rgba(7,6,13,.8)",border:"1px solid rgba(168,85,247,.1)",borderRadius:14,padding:4,gap:4,marginBottom:14}}>
+          {[["store","🛒 Магазин"],["inv","🎒 Инвентарь"]].map(([t,l])=>(
+            <button key={t} onClick={()=>setSub(t)} style={{flex:1,background:sub===t?"rgba(168,85,247,.15)":"none",border:"none",borderRadius:10,cursor:"pointer",color:sub===t?"#a855f7":"#2a1f4a",fontWeight:sub===t?700:400,fontSize:12,padding:"8px 4px",fontFamily:sub===t?"Cinzel,serif":"inherit",transition:"all .2s"}}>
+              {l}{t==="inv"&&(gs.inventory||[]).filter(i=>!i.used).length>0&&<span style={{background:"#e05555",borderRadius:"50%",fontSize:9,color:"#fff",padding:"1px 5px",marginLeft:5,fontFamily:"Rajdhani,sans-serif"}}>{(gs.inventory||[]).filter(i=>!i.used).length}</span>}
+            </button>
+          ))}
+        </div>
+
+        {sub!=="inv"&&<>
         {/* Gold header banner */}
         <div style={{borderRadius:20,overflow:"hidden",marginBottom:16,boxShadow:"0 0 30px rgba(212,160,23,.08)"}}>
           <div style={{height:3,background:"linear-gradient(90deg,#7c3aed,#d4a017,#f59e0b)"}}/>
@@ -1934,6 +1939,34 @@ export default function App() {
             <span style={{color:"#d4a017",fontSize:13,fontFamily:"Rajdhani,sans-serif",fontWeight:700}}>Gold</span>
           </div>
           <button onClick={()=>{if(!sForm.name.trim()){pop("Введи название",false);return;}upd(prev=>({...prev,shop:[...prev.shop,{id:`sh-${Date.now()}`,name:sForm.name.trim(),cost:sForm.cost,icon:sForm.icon}]}));setSForm({show:false,name:"",cost:50,icon:"⭐"});pop("Добавлено!");}} style={{...S.bWin,width:"100%",padding:"11px",fontFamily:"Cinzel,serif",fontSize:13}}>Добавить</button>
+        </div>}
+        </>}
+
+        {/* ── INVENTORY ── */}
+        {sub==="inv"&&<div>
+          <div style={{fontSize:11,color:"rgba(168,85,247,.45)",marginBottom:14,fontFamily:"Rajdhani,sans-serif",lineHeight:1.7,background:"rgba(168,85,247,.05)",border:"1px solid rgba(168,85,247,.1)",borderRadius:12,padding:"10px 14px"}}>
+            🎒 Здесь хранятся все купленные разрешения. Отметь как использованное когда воспользовался.
+          </div>
+          {(gs.inventory||[]).length===0
+            ?<div style={{textAlign:"center",padding:"40px 0",color:"rgba(168,85,247,.3)",fontFamily:"Cinzel,serif",fontSize:13}}>
+                <div style={{fontSize:40,marginBottom:12}}>🎒</div>
+                Инвентарь пуст<br/>
+                <span style={{fontSize:11,color:"rgba(168,85,247,.2)"}}>Купи что-нибудь в магазине</span>
+              </div>
+            :(gs.inventory||[]).map(item=>(
+              <div key={item.id} style={{background:item.used?"rgba(6,4,15,.4)":"rgba(15,8,35,.55)",border:`1px solid ${item.used?"rgba(168,85,247,.06)":"rgba(212,160,23,.2)"}`,borderRadius:16,padding:"13px 14px",marginBottom:8,display:"flex",alignItems:"center",gap:12,opacity:item.used?.45:1,backdropFilter:"blur(12px)",transition:"all .3s"}}>
+                <span style={{fontSize:28,filter:item.used?"grayscale(1)":"drop-shadow(0 0 8px rgba(212,160,23,.4))",flexShrink:0}}>{item.icon}</span>
+                <div style={{flex:1,minWidth:0}}>
+                  <div style={{fontWeight:700,fontSize:13,color:item.used?"#5a3fa0":"#e2d5f0",fontFamily:"Rajdhani,sans-serif",textDecoration:item.used?"line-through":"none"}}>{item.name}</div>
+                  <div style={{fontSize:10,color:"rgba(168,85,247,.3)",marginTop:2,fontFamily:"Rajdhani,sans-serif"}}>💰 {item.cost}G • {item.boughtAt}{item.used?" • Использовано":""}</div>
+                </div>
+                <div style={{display:"flex",gap:6,flexShrink:0}}>
+                  {!item.used&&<button onClick={()=>useInventoryItem(item.id)} style={{...S.bWin,padding:"6px 10px",fontSize:11}}>✓ Использовал</button>}
+                  <button onClick={()=>removeInventoryItem(item.id)} style={{background:"none",border:"none",cursor:"pointer",color:"rgba(168,85,247,.25)",fontSize:14,padding:"4px"}}>🗑</button>
+                </div>
+              </div>
+            ))
+          }
         </div>}
       </div>}
 
@@ -2071,11 +2104,11 @@ export default function App() {
               {c:(gs.sprints||[]).some(s=>s.completed),ico:"🎯",n:"Спринтер",    d:"Спринт завершён"},
               {c:(gs.deathCount||0)>=1,ico:"💀",n:"Возрождённый",d:"Пережил смерть"},
             ].map(a=>(
-              <div key={a.n} style={{background:a.c?"rgba(168,85,247,.08)":"rgba(6,4,15,.4)",border:`1px solid ${a.c?"rgba(168,85,247,.25)":"rgba(168,85,247,.06)"}`,borderRadius:12,padding:"10px 11px",display:"flex",alignItems:"center",gap:9,opacity:a.c?1:.35,transition:"all .3s",boxShadow:a.c?"0 0 12px rgba(168,85,247,.06)":"none"}}>
-                <span style={{fontSize:18,filter:a.c?"drop-shadow(0 0 6px rgba(212,160,23,.6))":"none",flexShrink:0}}>{a.ico}</span>
+              <div key={a.n} style={{background:a.c?"rgba(168,85,247,.08)":"rgba(6,4,15,.4)",border:`1px solid ${a.c?"rgba(168,85,247,.25)":"rgba(168,85,247,.1)"}`,borderRadius:12,padding:"10px 11px",display:"flex",alignItems:"center",gap:9,opacity:a.c?1:.55,transition:"all .3s",boxShadow:a.c?"0 0 12px rgba(168,85,247,.06)":"none"}}>
+                <span style={{fontSize:18,filter:a.c?"drop-shadow(0 0 6px rgba(212,160,23,.6))":"grayscale(1)",flexShrink:0}}>{a.ico}</span>
                 <div style={{minWidth:0}}>
-                  <div style={{fontSize:10,fontWeight:700,color:a.c?"#e2d5f0":"rgba(168,85,247,.3)",fontFamily:"Cinzel,serif",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{a.n}</div>
-                  <div style={{fontSize:9,color:"rgba(168,85,247,.35)",fontFamily:"Rajdhani,sans-serif",marginTop:1}}>{a.d}</div>
+                  <div style={{fontSize:10,fontWeight:700,color:a.c?"#e2d5f0":"rgba(168,85,247,.5)",fontFamily:"Cinzel,serif",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{a.n}</div>
+                  <div style={{fontSize:9,color:a.c?"rgba(168,85,247,.5)":"rgba(168,85,247,.4)",fontFamily:"Rajdhani,sans-serif",marginTop:1}}>{a.d}</div>
                 </div>
                 {a.c&&<span style={{color:"#d4a017",fontWeight:900,fontSize:14,marginLeft:"auto",flexShrink:0,textShadow:"0 0 8px rgba(212,160,23,.5)"}}>✓</span>}
               </div>
