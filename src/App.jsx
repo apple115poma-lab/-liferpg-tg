@@ -1490,10 +1490,10 @@ export default function App() {
 
       {/* ══ QUESTS ══ */}
       {tab==="quests"&&<div>
-        <div style={{display:"flex",borderBottom:"2px solid #3a2a6a",padding:"0",gap:0,backgroundColor:"#120a2e"}}>
+        <div style={{position:"sticky",top:0,zIndex:50,display:"flex",borderBottom:"2px solid #3a2a6a",gap:0,backgroundColor:"#120a2e"}}>
           {[["daily","Дейли"],["boss","Боссы"],["once","Разовые"],["rest","Отдых"]].map(([t,l])=>(
-            <div key={t} onClick={()=>setSub(t)} style={{flex:1,cursor:"pointer",textAlign:"center",padding:"12px 2px",borderBottom:sub===t?"3px solid #d4a017":"3px solid transparent",backgroundColor:sub===t?"#1e1040":"transparent"}}>
-              <span style={{fontSize:13,fontWeight:700,color:sub===t?"#d4a017":"#a89bc2",fontFamily:"sans-serif"}}>{l}</span>
+            <div key={t} onClick={()=>setSub(t)} style={{flex:1,cursor:"pointer",textAlign:"center",padding:"14px 2px 12px",borderBottom:sub===t?"3px solid #d4a017":"3px solid transparent",backgroundColor:sub===t?"#1e1040":"#120a2e"}}>
+              <span style={{display:"block",fontSize:14,fontWeight:700,color:sub===t?"#d4a017":"#c0aee0",fontFamily:"Arial,sans-serif"}}>{l}</span>
             </div>
           ))}
         </div>
