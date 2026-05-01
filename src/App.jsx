@@ -230,15 +230,22 @@ const saveState = async(gs)=>{
 
 const loadState = async()=>{
   const [cS,sS,qS,hS,shS,spS]=await Promise.all(SAVE_KEYS.map(k=>CS.get(k)));
-  // try old versions
   if(!cS){
+    // Try old localStorage keys but only migrate real onboarded saves
     for(const k of["rpg7-char","rpg-char","liferpg-v5"]){
       const old=localStorage.getItem(k);
-      if(old) return migrate(JSON.parse(old));
+      if(old){
+        const p=JSON.parse(old);
+        if(p.name&&p.name!=="Герой"&&(p.selectedSpheres||[]).length>0) return migrate(p);
+      }
     }
     return null;
   }
-  const char=JSON.parse(cS), state=JSON.parse(sS||"{}"), quests=JSON.parse(qS||"{}");
+  // Validate — must have real onboarding data
+  let charCheck;
+  try{ charCheck=JSON.parse(cS); }catch(e){ return null; }
+  if(!charCheck.name||charCheck.name==="Герой"||(charCheck.selectedSpheres||[]).length===0) return null;
+  const char=charCheck, state=JSON.parse(sS||"{}"), quests=JSON.parse(qS||"{}");
   const habits=JSON.parse(hS||"[]"), shopD=JSON.parse(shS||"{}"), spD=JSON.parse(spS||"{}");
   return migrate({...char,...state,...quests,habits,shop:shopD.shop||[...DEF_SHOP],purchases:shopD.purchases||[],inventory:shopD.inventory||[],sprints:spD.sprints||[],log:spD.log||[],weeklyReports:spD.weeklyReports||[]});
 };
@@ -1485,7 +1492,7 @@ export default function App() {
       {tab==="quests"&&<div>
         <div style={{display:"flex",background:"rgba(7,6,13,.8)",borderBottom:"1px solid rgba(168,85,247,.1)",padding:"0 10px",gap:1}}>
           {[["daily","Дейли"],["boss","Боссы"],["once","Разовые"],["rest","Отдых"]].map(([t,l])=>(
-            <button key={t} onClick={()=>setSub(t)} style={{background:"none",border:"none",cursor:"pointer",color:sub===t?"#d4a017":"#2a1f4a",fontWeight:sub===t?700:400,fontSize:11,padding:"9px 8px 8px",borderBottom:`2px solid ${sub===t?"#d4a017":"transparent"}`,fontFamily:sub===t?"Cinzel,serif":"inherit"}}>{l}</button>
+            <button key={t} onClick={()=>setSub(t)} style={{background:"none",border:"none",cursor:"pointer",color:sub===t?"#d4a017":"#7c6a9a",fontWeight:sub===t?700:600,fontSize:12,padding:"10px 10px 9px",borderBottom:`2px solid ${sub===t?"#d4a017":"transparent"}`,fontFamily:"Cinzel,serif",letterSpacing:.5,transition:"color .2s"}}>{l}</button>
           ))}
         </div>
         <div style={S.body}>
@@ -1920,8 +1927,8 @@ export default function App() {
           <div style={{height:3,background:"linear-gradient(90deg,#7c3aed,#d4a017,#f59e0b)"}}/>
           <div style={{background:"linear-gradient(135deg,rgba(20,12,3,.9),rgba(30,18,5,.9))",backdropFilter:"blur(16px)",border:"1px solid rgba(212,160,23,.2)",borderTop:"none",padding:"16px 18px",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
             <div>
-              <div style={{fontSize:9,color:"rgba(212,160,23,.5)",letterSpacing:3,fontFamily:"Cinzel,serif",marginBottom:4}}>МАГАЗИН РАЗРЕШЕНИЙ</div>
-              <div style={{fontSize:12,color:"rgba(212,160,23,.7)",fontFamily:"Cinzel,serif",lineHeight:1.5,fontWeight:600}}>Gold = право на отдых без вины</div>
+              <div style={{fontSize:13,color:"#d4a017",letterSpacing:2,fontFamily:"Cinzel,serif",marginBottom:5,fontWeight:900,textShadow:"0 0 12px rgba(212,160,23,.5)"}}>МАГАЗИН РАЗРЕШЕНИЙ</div>
+              <div style={{fontSize:11,color:"rgba(212,160,23,.55)",fontFamily:"Rajdhani,sans-serif",lineHeight:1.5,fontWeight:400}}>Gold = право на отдых без вины</div>
             </div>
             <div style={{textAlign:"center",background:"rgba(212,160,23,.08)",border:"1px solid rgba(212,160,23,.2)",borderRadius:16,padding:"10px 16px"}}>
               <div style={{fontSize:28,fontWeight:900,color:"#d4a017",fontFamily:"Rajdhani,sans-serif",lineHeight:1,textShadow:"0 0 20px rgba(212,160,23,.5)"}}>{gs.gold}</div>
