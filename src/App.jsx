@@ -1490,10 +1490,10 @@ export default function App() {
 
       {/* ══ QUESTS ══ */}
       {tab==="quests"&&<div>
-        <div style={{display:"flex",background:"rgba(10,6,20,.95)",borderBottom:"2px solid rgba(168,85,247,.25)",padding:"4px 8px 0",gap:4}}>
-          {[["daily","⚔️ Дейли"],["boss","👹 Боссы"],["once","✨ Разовые"],["rest","😴 Отдых"]].map(([t,l])=>(
-            <div key={t} onClick={()=>setSub(t)} style={{flex:1,cursor:"pointer",textAlign:"center",padding:"10px 2px 9px",borderBottom:`3px solid ${sub===t?"#d4a017":"transparent"}`,background:sub===t?"rgba(212,160,23,.08)":"transparent",transition:"all .2s"}}>
-              <span style={{fontSize:11,fontWeight:700,color:sub===t?"#d4a017":"#e2d5f0",fontFamily:"Cinzel,serif",letterSpacing:.3,textShadow:sub===t?"0 0 10px rgba(212,160,23,.5)":"none"}}>{l}</span>
+        <div style={{display:"flex",borderBottom:"2px solid #3a2a6a",padding:"0",gap:0,backgroundColor:"#120a2e"}}>
+          {[["daily","Дейли"],["boss","Боссы"],["once","Разовые"],["rest","Отдых"]].map(([t,l])=>(
+            <div key={t} onClick={()=>setSub(t)} style={{flex:1,cursor:"pointer",textAlign:"center",padding:"12px 2px",borderBottom:sub===t?"3px solid #d4a017":"3px solid transparent",backgroundColor:sub===t?"#1e1040":"transparent"}}>
+              <span style={{fontSize:13,fontWeight:700,color:sub===t?"#d4a017":"#a89bc2",fontFamily:"sans-serif"}}>{l}</span>
             </div>
           ))}
         </div>
