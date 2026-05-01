@@ -846,6 +846,7 @@ export default function App() {
   const [showSettings,setShowSettings] = useState(false);
   const [showWeeklyReport,setShowWeeklyReport] = useState(null);
   const [showStatInfo,setShowStatInfo] = useState(null);
+  const [showComboInfo,setShowComboInfo] = useState(false);
   const [deathScreen,setDeathScreen] = useState(false);
   const [rebirthScreen,setRebirthScreen] = useState(false);
   const [resetStep,setResetStep] = useState(0);
@@ -1133,6 +1134,40 @@ export default function App() {
       {showGoal&&<GoalWindow goal={gs.goal} onClose={()=>setShowGoal(false)} onEdit={(g)=>upd(prev=>({...prev,goal:g}))}/>}
       {showShare&&<ShareCard gs={gs} cls={cls} lvi={lvi} onClose={()=>setShowShare(false)}/>}
       {showHpTip&&<HpTooltip onClose={()=>setShowHpTip(false)}/>}
+
+      {/* Combo Info */}
+      {showComboInfo&&<div style={{position:"fixed",inset:0,background:"rgba(0,0,0,.8)",zIndex:200,display:"flex",alignItems:"center",justifyContent:"center",padding:16}} onClick={()=>setShowComboInfo(false)}>
+        <div style={{background:"rgba(15,8,35,.55)",border:"1px solid rgba(249,115,22,.3)",borderRadius:16,padding:20,width:"min(320px,90vw)"}} onClick={e=>e.stopPropagation()}>
+          <div style={{fontSize:32,textAlign:"center",marginBottom:8,filter:"drop-shadow(0 0 12px rgba(249,115,22,.6))"}}>🔥</div>
+          <div style={{fontSize:14,fontWeight:700,color:"#f97316",textAlign:"center",fontFamily:"Cinzel,serif",marginBottom:4,letterSpacing:1}}>КОМБО</div>
+          <div style={{fontSize:11,color:"rgba(249,115,22,.6)",textAlign:"center",fontFamily:"Rajdhani,sans-serif",marginBottom:14}}>Сейчас: {gs.combo} {declDay(gs.combo)} • множитель {multS||"×1.0"}</div>
+          <div style={{background:"rgba(6,4,15,.7)",borderRadius:12,padding:"12px 14px",marginBottom:12}}>
+            <div style={{fontSize:11,color:"#f97316",fontWeight:700,marginBottom:8,fontFamily:"Cinzel,serif",letterSpacing:1}}>КАК НАБИВАТЬ</div>
+            <div style={{fontSize:12,color:"#7c6a9a",lineHeight:2.0,fontFamily:"Rajdhani,sans-serif"}}>
+              <span style={{color:"#4ade80"}}>◆ Выполни ВСЕ дейли за день</span> → +1 комбо<br/>
+              Формула XP: <span style={{color:"#f97316",fontWeight:700}}>×(1 + комбо × 0.1)</span><br/>
+              Максимум: <span style={{color:"#f97316",fontWeight:700}}>×2.5</span>
+            </div>
+          </div>
+          <div style={{background:"rgba(25,5,5,.6)",border:"1px solid rgba(224,85,85,.2)",borderRadius:10,padding:"10px 12px",marginBottom:14}}>
+            <div style={{fontSize:11,color:"#e05555",fontWeight:700,marginBottom:5,fontFamily:"Cinzel,serif"}}>⚠️ СБРОС КОМБО</div>
+            <div style={{fontSize:11,color:"#7c6a9a",lineHeight:1.8,fontFamily:"Rajdhani,sans-serif"}}>
+              • Пропустил день (не сделал ни одного дейли)<br/>
+              • Проиграл мини-боссу<br/>
+              • Взял второй день отдыха за неделю
+            </div>
+          </div>
+          <div style={{background:"rgba(212,160,23,.06)",border:"1px solid rgba(212,160,23,.2)",borderRadius:10,padding:"9px 12px",marginBottom:14}}>
+            <div style={{fontSize:11,color:"#d4a017",fontWeight:700,marginBottom:4,fontFamily:"Cinzel,serif"}}>⚔️ КЛАССЫ ЗА КОМБО</div>
+            <div style={{fontSize:11,color:"#7c6a9a",lineHeight:1.8,fontFamily:"Rajdhani,sans-serif"}}>
+              <span style={{color:"#f97316"}}>Берсерк</span> — 7+ дней<br/>
+              <span style={{color:"#a78bfa"}}>Теневой</span> — 14+ дней (+30% XP)<br/>
+              <span style={{color:"#38bdf8"}}>Океан Воли</span> — 21+ день (+35% XP, комбо нельзя сбросить)
+            </div>
+          </div>
+          <button onClick={()=>setShowComboInfo(false)} style={{...S.bGray,width:"100%",padding:"9px",fontSize:12}}>Понял ⚔️</button>
+        </div>
+      </div>}
       {lvlUp&&<div style={S.overlay}><div style={{textAlign:"center",animation:"popIn .4s ease"}}>
         <div style={{fontSize:80,filter:"drop-shadow(0 0 30px #d4a017)"}}>⚡</div>
         <div style={{fontSize:42,fontWeight:900,color:"#d4a017",fontFamily:"Cinzel,serif",textShadow:"0 0 40px #d4a01780"}}>LEVEL UP!</div>
@@ -1308,11 +1343,11 @@ export default function App() {
               <span style={{fontSize:12}}>💰</span>
               <span style={{fontSize:13,fontWeight:800,color:"#d4a017",fontFamily:"Rajdhani,sans-serif"}}>{gs.gold}</span>
             </div>
-            {/* Combo pill */}
-            {multS&&<div style={{display:"flex",alignItems:"center",gap:4,background:"rgba(249,115,22,.1)",border:"1px solid rgba(249,115,22,.3)",borderRadius:20,padding:"5px 10px",backdropFilter:"blur(10px)",boxShadow:"0 0 12px rgba(249,115,22,.15)"}}>
+            {/* Combo pill — always visible, clickable */}
+            <button onClick={()=>setShowComboInfo(true)} style={{display:"flex",alignItems:"center",gap:4,background:gs.combo>0?"rgba(249,115,22,.1)":"rgba(168,85,247,.08)",border:`1px solid ${gs.combo>0?"rgba(249,115,22,.3)":"rgba(168,85,247,.2)"}`,borderRadius:20,padding:"5px 10px",backdropFilter:"blur(10px)",boxShadow:gs.combo>0?"0 0 12px rgba(249,115,22,.15)":"none",cursor:"pointer"}}>
               <span style={{fontSize:11}}>🔥</span>
-              <span style={{fontSize:12,fontWeight:800,color:"#f97316",fontFamily:"Rajdhani,sans-serif"}}>{multS}</span>
-            </div>}
+              <span style={{fontSize:12,fontWeight:800,color:gs.combo>0?"#f97316":"rgba(168,85,247,.4)",fontFamily:"Rajdhani,sans-serif"}}>{gs.combo>0?multS:"×1.0"}</span>
+            </button>
           </div>
         </div>
 
@@ -1471,10 +1506,14 @@ export default function App() {
                   return <div key={q.id}>
                     {isEd?<div style={{background:"rgba(15,8,35,.7)",border:`1px solid ${st.color}50`,borderRadius:16,padding:14,marginBottom:8,backdropFilter:"blur(12px)"}}>
                       <input value={editBuf.title||""} onChange={e=>setEditBuf(b=>({...b,title:e.target.value}))} placeholder="Название" style={{...S.inp,marginBottom:6}}/>
-                      <input value={editBuf.desc||""} onChange={e=>setEditBuf(b=>({...b,desc:e.target.value}))} placeholder="Описание" style={{...S.inp,marginBottom:6}}/>
-                      <div style={{display:"flex",gap:7,alignItems:"center",marginBottom:8}}>
-                        <input type="number" value={editBuf.xp||50} onChange={e=>setEditBuf(b=>({...b,xp:Math.min(200,parseInt(e.target.value)||50)}))} style={{...S.inp,width:70}}/>
-                        <span style={{color:"#a855f7",fontSize:11,fontFamily:"Rajdhani,sans-serif"}}>XP (макс 200)</span>
+                      <input value={editBuf.desc||""} onChange={e=>setEditBuf(b=>({...b,desc:e.target.value}))} placeholder="Описание" style={{...S.inp,marginBottom:8}}/>
+                      <div style={{fontSize:10,color:"#5a3fa0",marginBottom:5,fontFamily:"Cinzel,serif",letterSpacing:1}}>XP ЗА КВЕСТ</div>
+                      <div style={{display:"flex",gap:4,marginBottom:9,flexWrap:"wrap"}}>
+                        {[{xp:25,label:"Лёгкий",color:"#4ade80"},{xp:50,label:"Средний",color:"#fbbf24"},{xp:80,label:"Сложный",color:"#f97316"},{xp:120,label:"Эпик",color:"#e05555"},{xp:200,label:"Легенда",color:"#a855f7"}].map(t=>(
+                          <button key={t.xp} onClick={()=>setEditBuf(b=>({...b,xp:t.xp}))} style={{flex:1,minWidth:0,background:(editBuf.xp||50)===t.xp?`${t.color}15`:"#07060d",border:`1px solid ${(editBuf.xp||50)===t.xp?t.color:"rgba(168,85,247,.15)"}`,borderRadius:9,padding:"7px 3px",cursor:"pointer",color:(editBuf.xp||50)===t.xp?t.color:"#5a3fa0",fontSize:9,fontWeight:(editBuf.xp||50)===t.xp?700:400,textAlign:"center",lineHeight:1.4,fontFamily:"Rajdhani,sans-serif"}}>
+                            {t.label}<br/><span style={{fontSize:10,fontWeight:700}}>{t.xp}</span>
+                          </button>
+                        ))}
                       </div>
                       <div style={{display:"flex",gap:7}}>
                         <button onClick={saveQEdit} style={{...S.bWin,flex:1,padding:"8px"}}>✓</button>
@@ -1882,7 +1921,7 @@ export default function App() {
           <div style={{background:"linear-gradient(135deg,rgba(20,12,3,.9),rgba(30,18,5,.9))",backdropFilter:"blur(16px)",border:"1px solid rgba(212,160,23,.2)",borderTop:"none",padding:"16px 18px",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
             <div>
               <div style={{fontSize:9,color:"rgba(212,160,23,.5)",letterSpacing:3,fontFamily:"Cinzel,serif",marginBottom:4}}>МАГАЗИН РАЗРЕШЕНИЙ</div>
-              <div style={{fontSize:12,color:"rgba(212,160,23,.6)",fontFamily:"Rajdhani,sans-serif",lineHeight:1.5}}>Gold = право на отдых без чувства вины</div>
+              <div style={{fontSize:12,color:"rgba(212,160,23,.7)",fontFamily:"Cinzel,serif",lineHeight:1.5,fontWeight:600}}>Gold = право на отдых без вины</div>
             </div>
             <div style={{textAlign:"center",background:"rgba(212,160,23,.08)",border:"1px solid rgba(212,160,23,.2)",borderRadius:16,padding:"10px 16px"}}>
               <div style={{fontSize:28,fontWeight:900,color:"#d4a017",fontFamily:"Rajdhani,sans-serif",lineHeight:1,textShadow:"0 0 20px rgba(212,160,23,.5)"}}>{gs.gold}</div>
